@@ -1,13 +1,17 @@
-"""Vercel serverless function - All 5 models with fallback."""
+"""Vercel serverless function - All 5 models."""
 from http.server import BaseHTTPRequestHandler
 import json
 import sys
-import os
 from pathlib import Path
 
 # Setup paths
 BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE_DIR))
+
+# Import ML libraries at module level
+import joblib
+import pandas as pd
+import numpy as np
 
 # Global cache
 MODELS = {}
@@ -20,9 +24,6 @@ def load_all_models():
     
     if MODELS:
         return
-    
-    import joblib
-    import pandas as pd
     
     models_dir = BASE_DIR / "models"
     
@@ -57,12 +58,15 @@ def load_all_models():
                         'mae': perf['mae']
                     }
                     break
+            print(f"✓ Loaded {model_name}", file=sys.stderr)
         except Exception as e:
-            print(f"Warning: Could not load {model_name}: {e}", file=sys.stderr)
+            print(f"✗ Failed to load {model_name}: {e}", file=sys.stderr)
             continue
     
     if not MODELS:
         raise Exception("No models could be loaded!")
+    
+    print(f"Total models loaded: {list(MODELS.keys())}", file=sys.stderr)
 
 class handler(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
@@ -76,8 +80,6 @@ class handler(BaseHTTPRequestHandler):
     def do_POST(self):
         """Handle predictions."""
         try:
-            import pandas as pd
-            
             # Load models
             load_all_models()
             
@@ -140,7 +142,8 @@ class handler(BaseHTTPRequestHandler):
             
         except Exception as e:
             import traceback
-            traceback.print_exc()
+            error_trace = traceback.format_exc()
+            print(f"Error: {error_trace}", file=sys.stderr)
             self.send_json({
                 'success': False,
                 'error': str(e),
