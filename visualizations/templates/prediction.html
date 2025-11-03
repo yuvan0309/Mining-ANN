@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factor of Safety (FoS) Prediction System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 0;
+        }
+
+        .input-section {
+            padding: 30px;
+            border-right: 2px solid #ecf0f1;
+        }
+
+        .result-section {
+            padding: 30px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        .model-selector {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .model-selector h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .model-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .model-option {
+            position: relative;
+        }
+
+        .model-option input[type="radio"] {
+            display: none;
+        }
+
+        .model-option label {
+            display: block;
+            padding: 12px 15px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .model-option input[type="radio"]:checked + label {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+
+        .model-option label:hover {
+            border-color: #667eea;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .model-name {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .model-score {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .best-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ffd700;
+            color: #333;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+        }
+
+        .feature-groups {
+            display: grid;
+            gap: 20px;
+        }
+
+        .feature-group {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .feature-group h4 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .feature-input {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .feature-input label {
+            font-size: 0.9em;
+            color: #555;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .feature-input input {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .feature-input input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .result-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .result-card h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .prediction-value {
+            font-size: 3em;
+            font-weight: bold;
+            color: #667eea;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .prediction-label {
+            text-align: center;
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        .safety-status {
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .safety-safe {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .safety-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffeaa7;
+        }
+
+        .safety-critical {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .model-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .model-info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .model-info-row:last-child {
+            border-bottom: none;
+        }
+
+        .model-info-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .model-info-value {
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #f5c6cb;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #17a2b8;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .input-section {
+                border-right: none;
+                border-bottom: 2px solid #ecf0f1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .model-options {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⛏️ Factor of Safety (FoS) Prediction System</h1>
+            <p>Machine Learning-Based Mining Slope Stability Analysis</p>
+        </div>
+
+        <div class="main-content">
+            <div class="input-section">
+                <div class="model-selector">
+                    <h3>🎯 Select Prediction Model</h3>
+                    <div class="model-options">
+                        {% for model_key, model_data in models.items() %}
+                        <div class="model-option">
+                            <input type="radio" 
+                                   id="model_{{ model_key }}" 
+                                   name="model" 
+                                   value="{{ model_key }}"
+                                   {% if model_key == best_model %}checked{% endif %}>
+                            <label for="model_{{ model_key }}">
+                                {% if model_key == best_model %}
+                                <span class="best-badge">🥇 BEST</span>
+                                {% endif %}
+                                <span class="model-name">{{ model_data.name }}</span>
+                                <span class="model-score">R² = {{ "%.4f"|format(model_data.r2) }}</span>
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>💡 Quick Start:</strong> Enter material properties below or click "Load Sample Data" to see an example. The best model is pre-selected for highest accuracy.
+                </div>
+
+                <form id="predictionForm">
+                    <div class="feature-groups">
+                        <div class="feature-group">
+                            <h4>🪨 Laterite Properties</h4>
+                            <div class="feature-grid">
+                                <div class="feature-input">
+                                    <label>Cohesion (kPa)</label>
+                                    <input type="number" name="laterite_cohesion_kpa" step="0.01" value="0">
+                                </div>
+                                <div class="feature-input">
+                                    <label>Friction Angle (°)</label>
+                                    <input type="number" name="laterite_friction_angle_deg" step="0.01" value="0">
+                                </div>
+                                <div class="feature-input">
+                                    <label>Unit Weight (kN/m³)</label>
+                                    <input type="number" name="laterite_unit_weight_kn_per_m3" step="0.01" value="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="feature-group">
+                            <h4>🟤 Phyllitic Clay Properties</h4>
+                            <div class="feature-grid">
+                                <div class="feature-input">
+                                    <label>Cohesion (kPa)</label>
+                                    <input type="number" name="phyllitic_clay_cohesion_kpa" step="0.01" value="0">
+                                </div>
+                                <div class="feature-input">
+                                    <label>Friction Angle (°)</label>
+                                    <input type="number" name="phyllitic_clay_friction_angle_deg" step="0.01" value="0">
+                                </div>
+                                <div class="feature-input">
+                                    <label>Unit Weight (kN/m³)</label>
+                                    <input type="number" name="phyllitic_clay_unit_weight_kn_per_m3" step="0.01" value="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="feature-group">
+                            <h4>⚫ Lumpy Iron Ore Properties</h4>
+                            <div class="feature-grid">
+                                <div class="feature-input">
+                                    <label>Cohesion (kPa)</label>
+                                    <input type="number" name="lumpy_iron_ore_cohesion_kpa" step="0.01" value="0">
+                                </div>
+                                <div class="feature-input">
+                                    <label>Friction Angle (°)</label>
+                                    <input type="number" name="lumpy_iron_ore_friction_angle_deg" step="0.01" value="0">
+                                </div>
+                                <div class="feature-input">
+                                    <label>Unit Weight (kN/m³)</label>
+                                    <input type="number" name="lumpy_iron_ore_unit_weight_kn_per_m3" step="0.01" value="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="feature-group">
+                            <h4>🟫 Limonitic Clay Properties</h4>
+                            <div class="feature-grid">
+                                <div class="feature-input">
+                                    <label>Cohesion (kPa)</label>
+                                    <input type="number" name="limonitic_clay_cohesion_kpa" step="0.01" value="0">
+                                </div>
+                                <div class="feature-input">
+                                    <label>Friction Angle (°)</label>
+                                    <input type="number" name="limonitic_clay_friction_angle_deg" step="0.01" value="0">
+                                </div>
+                                <div class="feature-input">
+                                    <label>Unit Weight (kN/m³)</label>
+                                    <input type="number" name="limonitic_clay_unit_weight_kn_per_m3" step="0.01" value="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="feature-group">
+                            <h4>⚫ Manganiferous Clay Properties</h4>
+                            <div class="feature-grid">
+                                <div class="feature-input">
+                                    <label>Cohesion (kPa)</label>
+                                    <input type="number" name="manganiferous_clay_cohesion_kpa" step="0.01" value="0">
+                                </div>
+                                <div class="feature-input">
+                                    <label>Friction Angle (°)</label>
+                                    <input type="number" name="manganiferous_clay_friction_angle_deg" step="0.01" value="0">
+                                </div>
+                                <div class="feature-input">
+                                    <label>Unit Weight (kN/m³)</label>
+                                    <input type="number" name="manganiferous_clay_unit_weight_kn_per_m3" step="0.01" value="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="feature-group">
+                            <h4>🔵 Siliceous Clay Properties</h4>
+                            <div class="feature-grid">
+                                <div class="feature-input">
+                                    <label>Cohesion (kPa)</label>
+                                    <input type="number" name="siliceous_clay_cohesion_kpa" step="0.01" value="0">
+                                </div>
+                                <div class="feature-input">
+                                    <label>Friction Angle (°)</label>
+                                    <input type="number" name="siliceous_clay_friction_angle_deg" step="0.01" value="0">
+                                </div>
+                                <div class="feature-input">
+                                    <label>Unit Weight (kN/m³)</label>
+                                    <input type="number" name="siliceous_clay_unit_weight_kn_per_m3" step="0.01" value="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="feature-group">
+                            <h4>⬜ BHQ Properties</h4>
+                            <div class="feature-grid">
+                                <div class="feature-input">
+                                    <label>Cohesion (kPa)</label>
+                                    <input type="number" name="bhq_cohesion_kpa" step="0.01" value="0">
+                                </div>
+                                <div class="feature-input">
+                                    <label>Friction Angle (°)</label>
+                                    <input type="number" name="bhq_friction_angle_deg" step="0.01" value="0">
+                                </div>
+                                <div class="feature-input">
+                                    <label>Unit Weight (kN/m³)</label>
+                                    <input type="number" name="bhq_unit_weight_kn_per_m3" step="0.01" value="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="feature-group">
+                            <h4>🪨 Schist Properties</h4>
+                            <div class="feature-grid">
+                                <div class="feature-input">
+                                    <label>Cohesion (kPa)</label>
+                                    <input type="number" name="schist_cohesion_kpa" step="0.01" value="0">
+                                </div>
+                                <div class="feature-input">
+                                    <label>Friction Angle (°)</label>
+                                    <input type="number" name="schist_friction_angle_deg" step="0.01" value="0">
+                                </div>
+                                <div class="feature-input">
+                                    <label>Unit Weight (kN/m³)</label>
+                                    <input type="number" name="schist_unit_weight_kn_per_m3" step="0.01" value="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="feature-group">
+                            <h4>📊 Mean Properties</h4>
+                            <div class="feature-grid">
+                                <div class="feature-input">
+                                    <label>Mean Cohesion (kPa)</label>
+                                    <input type="number" name="mean_cohesion_kpa" step="0.01" value="0">
+                                </div>
+                                <div class="feature-input">
+                                    <label>Mean Friction Angle (°)</label>
+                                    <input type="number" name="mean_friction_angle_deg" step="0.01" value="0">
+                                </div>
+                                <div class="feature-input">
+                                    <label>Mean Unit Weight (kN/m³)</label>
+                                    <input type="number" name="mean_unit_weight_kn_per_m3" step="0.01" value="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button type="submit" class="btn btn-primary">🎯 Predict FoS</button>
+                        <button type="button" class="btn btn-secondary" onclick="loadSampleData()">📋 Load Sample Data</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">🔄 Reset</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="result-section">
+                <div class="result-card">
+                    <h3>📊 Prediction Results</h3>
+                    
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                        <p style="margin-top: 15px; color: #666;">Calculating...</p>
+                    </div>
+
+                    <div id="resultContent" style="display: none;">
+                        <div class="prediction-label">Predicted Factor of Safety</div>
+                        <div class="prediction-value" id="predictionValue">-</div>
+                        
+                        <div class="safety-status" id="safetyStatus">
+                            Ready to predict
+                        </div>
+
+                        <div class="model-info">
+                            <div class="model-info-row">
+                                <span class="model-info-label">Model Used:</span>
+                                <span class="model-info-value" id="modelUsed">-</span>
+                            </div>
+                            <div class="model-info-row">
+                                <span class="model-info-label">Model R² Score:</span>
+                                <span class="model-info-value" id="modelR2">-</span>
+                            </div>
+                            <div class="model-info-row">
+                                <span class="model-info-label">Model RMSE:</span>
+                                <span class="model-info-value" id="modelRMSE">-</span>
+                            </div>
+                            <div class="model-info-row">
+                                <span class="model-info-label">Model MAE:</span>
+                                <span class="model-info-value" id="modelMAE">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="error-message" id="errorMessage"></div>
+                </div>
+
+                <div class="result-card">
+                    <h3>ℹ️ About FoS</h3>
+                    <p style="color: #666; line-height: 1.6; margin-bottom: 15px;">
+                        The Factor of Safety (FoS) is a critical parameter in mining slope stability analysis:
+                    </p>
+                    <ul style="color: #666; line-height: 1.8; margin-left: 20px;">
+                        <li><strong>FoS > 1.5:</strong> Safe - Excellent stability</li>
+                        <li><strong>FoS = 1.2-1.5:</strong> Warning - Monitor closely</li>
+                        <li><strong>FoS < 1.2:</strong> Critical - Immediate action required</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Get selected model
+            const selectedModel = document.querySelector('input[name="model"]:checked').value;
+            
+            // Collect all feature values
+            const formData = new FormData(e.target);
+            const features = {};
+            
+            for (let [key, value] of formData.entries()) {
+                if (key !== 'model') {
+                    features[key] = parseFloat(value) || 0;
+                }
+            }
+            
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('resultContent').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+            
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        model: selectedModel,
+                        features: features
+                    })
+                });
+                
+                const data = await response.json();
+                
+                // Hide loading
+                document.getElementById('loading').style.display = 'none';
+                
+                if (data.success) {
+                    // Display results
+                    document.getElementById('predictionValue').textContent = data.prediction.toFixed(4);
+                    document.getElementById('modelUsed').textContent = data.model_used;
+                    document.getElementById('modelR2').textContent = data.model_r2.toFixed(4);
+                    document.getElementById('modelRMSE').textContent = data.model_rmse.toFixed(4);
+                    document.getElementById('modelMAE').textContent = data.model_mae.toFixed(4);
+                    
+                    // Update safety status
+                    const safetyStatus = document.getElementById('safetyStatus');
+                    const fos = data.prediction;
+                    
+                    if (fos > 1.5) {
+                        safetyStatus.className = 'safety-status safety-safe';
+                        safetyStatus.textContent = '✅ SAFE - Excellent stability';
+                    } else if (fos >= 1.2) {
+                        safetyStatus.className = 'safety-status safety-warning';
+                        safetyStatus.textContent = '⚠️ WARNING - Monitor closely';
+                    } else {
+                        safetyStatus.className = 'safety-status safety-critical';
+                        safetyStatus.textContent = '🚨 CRITICAL - Immediate action required';
+                    }
+                    
+                    document.getElementById('resultContent').style.display = 'block';
+                } else {
+                    // Show error
+                    document.getElementById('errorMessage').textContent = 'Error: ' + data.error;
+                    document.getElementById('errorMessage').style.display = 'block';
+                }
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('errorMessage').textContent = 'Error: ' + error.message;
+                document.getElementById('errorMessage').style.display = 'block';
+            }
+        });
+
+        async function loadSampleData() {
+            try {
+                const response = await fetch('/get_sample_data');
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Fill form with sample data
+                    const form = document.getElementById('predictionForm');
+                    for (let [key, value] of Object.entries(data.features)) {
+                        const input = form.querySelector(`input[name="${key}"]`);
+                        if (input) {
+                            input.value = value.toFixed(2);
+                        }
+                    }
+                    
+                    alert('Sample data loaded successfully! Click "Predict FoS" to see the prediction.');
+                } else {
+                    alert('Error loading sample data: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('predictionForm').reset();
+            // Re-select the best model
+            document.querySelector('input[name="model"][checked]').checked = true;
+            document.getElementById('resultContent').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
