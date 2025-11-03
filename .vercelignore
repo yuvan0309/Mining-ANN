@@ -1,0 +1,55 @@
+# Python virtual environment and cache
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Git and IDE
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# Data files (not needed for serverless deployment)
+excel/
+formula file with steps/
+premonsoonwithoutru/
+postmonsoonwithoutru/
+calculations/
+*.csv
+*.xlsx
+*.xls
+
+# Documentation (except README)
+TECHNICAL_REPORT.md
+TECHNICAL_REPORT_UPDATED.md
+TECHNICAL_REPORT.txt
+*.md
+!README.md
+!VERCEL_DEPLOYMENT_GUIDE.md
+
+# Visualization files (not needed for serverless)
+visualizations/generate_plots.py
+visualizations/create_dashboard.py
+visualizations/prediction_app.py
+visualizations/plots/
+visualizations/templates/
+visualizations/dashboard.html
+visualizations/*.sh
+visualizations/*.md
+visualizations/*.log
+visualizations/app.log
+
+# Large documents
+*.docx
+*.pdf
+*.doc
+
+# Logs and temp files
+*.log
+*.tmp
+.DS_Store
+Thumbs.db

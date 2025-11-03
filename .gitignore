@@ -1,0 +1,45 @@
+# Python
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+app.log
+nohup.out
+
+# Large data files (keep in local only)
+*.csv
+*.xlsx
+*.xls
+*.docx
+*.pdf
+*.doc
+
+# Visualization outputs (can be regenerated)
+visualizations/plots/
+visualizations/dashboard.html
+
+# Keep essential files
+!requirements.txt
+!requirements-vercel.txt
