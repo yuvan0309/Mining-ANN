@@ -1,4 +1,4 @@
-"""Vercel serverless function - All 5 models."""
+"""Vercel serverless function - Optimized for serverless."""
 from http.server import BaseHTTPRequestHandler
 import json
 import sys
@@ -6,67 +6,86 @@ from pathlib import Path
 
 # Setup paths
 BASE_DIR = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(BASE_DIR))
 
-# Import ML libraries at module level
-import joblib
-import pandas as pd
-import numpy as np
+# Import at module level - fail fast if dependencies missing
+try:
+    import joblib
+    import pandas as pd
+    import numpy as np
+    DEPS_AVAILABLE = True
+except ImportError as e:
+    DEPS_AVAILABLE = False
+    IMPORT_ERROR = str(e)
 
 # Global cache
 MODELS = {}
 MODEL_INFO = {}
-BEST_MODEL = None
+INITIALIZED = False
 
-def load_all_models():
-    """Load all 5 models with individual error handling."""
-    global MODELS, MODEL_INFO, BEST_MODEL
+def initialize():
+    """Initialize models once."""
+    global MODELS, MODEL_INFO, INITIALIZED
     
-    if MODELS:
-        return
+    if INITIALIZED:
+        return True
     
-    models_dir = BASE_DIR / "models"
+    if not DEPS_AVAILABLE:
+        raise Exception(f"Dependencies not available: {IMPORT_ERROR}")
     
-    # Load performance data
-    with open(models_dir / "model_performance.json", 'r') as f:
-        perf_data = json.load(f)
-    
-    # Find best model
-    BEST_MODEL = sorted(perf_data, key=lambda x: x['r2'], reverse=True)[0]['model']
-    
-    # Try loading each model
-    model_files = {
-        'svm': 'svm.joblib',
-        'random_forest': 'random_forest.joblib',
-        'xgboost': 'xgboost.joblib',
-        'lightgbm': 'lightgbm.joblib',
-        'ann_mlp': 'ann_mlp.joblib'
-    }
-    
-    for model_name, filename in model_files.items():
+    try:
+        models_dir = BASE_DIR / "models"
+        
+        # Load performance data
+        perf_file = models_dir / "model_performance.json"
+        with open(perf_file, 'r') as f:
+            perf_data = json.load(f)
+        
+        # Load only SVM first (fastest, most compatible)
         try:
-            model_path = models_dir / filename
-            MODELS[model_name] = joblib.load(model_path)
+            svm_path = models_dir / "svm.joblib"
+            MODELS['svm'] = joblib.load(svm_path)
             
-            # Get performance info
             for perf in perf_data:
-                if perf['model'] == model_name:
-                    MODEL_INFO[model_name] = {
-                        'name': model_name.replace('_', ' ').title(),
+                if perf['model'] == 'svm':
+                    MODEL_INFO['svm'] = {
+                        'name': 'SVM',
                         'r2': perf['r2'],
                         'rmse': perf['rmse'],
                         'mae': perf['mae']
                     }
                     break
-            print(f"✓ Loaded {model_name}", file=sys.stderr)
         except Exception as e:
-            print(f"✗ Failed to load {model_name}: {e}", file=sys.stderr)
-            continue
-    
-    if not MODELS:
-        raise Exception("No models could be loaded!")
-    
-    print(f"Total models loaded: {list(MODELS.keys())}", file=sys.stderr)
+            print(f"Failed to load SVM: {e}", file=sys.stderr)
+        
+        # Try other models (best effort)
+        other_models = {
+            'random_forest': 'random_forest.joblib',
+            'ann_mlp': 'ann_mlp.joblib'
+        }
+        
+        for model_name, filename in other_models.items():
+            try:
+                model_path = models_dir / filename
+                MODELS[model_name] = joblib.load(model_path)
+                
+                for perf in perf_data:
+                    if perf['model'] == model_name:
+                        MODEL_INFO[model_name] = {
+                            'name': model_name.replace('_', ' ').title(),
+                            'r2': perf['r2'],
+                            'rmse': perf['rmse'],
+                            'mae': perf['mae']
+                        }
+                        break
+            except:
+                pass  # Skip if fails
+        
+        INITIALIZED = True
+        return True
+        
+    except Exception as e:
+        print(f"Initialization error: {e}", file=sys.stderr)
+        return False
 
 class handler(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
@@ -80,21 +99,22 @@ class handler(BaseHTTPRequestHandler):
     def do_POST(self):
         """Handle predictions."""
         try:
-            # Load models
-            load_all_models()
+            # Initialize models
+            if not initialize():
+                raise Exception("Failed to initialize models")
+            
+            if not MODELS:
+                raise Exception("No models available")
             
             # Parse request
             content_length = int(self.headers.get('Content-Length', 0))
             body = self.rfile.read(content_length).decode('utf-8')
             data = json.loads(body)
             
-            # Get model selection
-            model_name = data.get('model', BEST_MODEL)
-            
-            # Fallback if requested model not available
+            # Get model (use first available if requested not found)
+            model_name = data.get('model', list(MODELS.keys())[0])
             if model_name not in MODELS:
-                available = list(MODELS.keys())
-                model_name = available[0] if available else BEST_MODEL
+                model_name = list(MODELS.keys())[0]
             
             # Prepare features
             features = data.get('features', {})
@@ -122,13 +142,12 @@ class handler(BaseHTTPRequestHandler):
                 except:
                     feature_dict[name] = 0.0
             
-            # Create DataFrame and predict
+            # Predict
             X = pd.DataFrame([feature_dict])
-            model = MODELS[model_name]
-            prediction = model.predict(X)[0]
+            prediction = MODELS[model_name].predict(X)[0]
             
             # Response
-            response = {
+            self.send_json({
                 'success': True,
                 'prediction': float(prediction),
                 'model_used': MODEL_INFO[model_name]['name'],
@@ -136,24 +155,24 @@ class handler(BaseHTTPRequestHandler):
                 'model_rmse': float(MODEL_INFO[model_name]['rmse']),
                 'model_mae': float(MODEL_INFO[model_name]['mae']),
                 'available_models': list(MODELS.keys())
-            }
-            
-            self.send_json(response)
+            })
             
         except Exception as e:
             import traceback
-            error_trace = traceback.format_exc()
-            print(f"Error: {error_trace}", file=sys.stderr)
+            traceback.print_exc()
             self.send_json({
                 'success': False,
                 'error': str(e),
-                'available_models': list(MODELS.keys()) if MODELS else []
+                'type': type(e).__name__
             }, 500)
     
     def send_json(self, data, status=200):
-        """Send JSON response."""
-        self.send_response(status)
-        self.send_header('Content-Type', 'application/json')
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.end_headers()
-        self.wfile.write(json.dumps(data).encode('utf-8'))
+        """Send JSON response - guaranteed."""
+        try:
+            self.send_response(status)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            self.wfile.write(json.dumps(data).encode('utf-8'))
+        except:
+            pass  # Fail silently if already sent
