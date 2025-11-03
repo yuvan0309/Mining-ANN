@@ -1,68 +1,51 @@
-"""Vercel serverless function for FoS prediction."""
+"""Vercel serverless function for FoS prediction - Simplified."""
 
 from http.server import BaseHTTPRequestHandler
-from urllib.parse import parse_qs
 import json
 import sys
 import os
 
-# Add parent directory to path for imports
+# Add parent directory to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# Import after path is set
 import joblib
 import pandas as pd
 from pathlib import Path
 
-# Global variables for models
-MODELS = {}
-MODEL_INFO = {}
-BEST_MODEL = None
+# Global variables
+MODEL = None
+MODEL_INFO = None
 
-def load_models():
-    """Load all trained models."""
-    global MODELS, MODEL_INFO, BEST_MODEL
+def load_svm_model():
+    """Load only the SVM model (most compatible with serverless)."""
+    global MODEL, MODEL_INFO
     
-    if MODELS:  # Already loaded
+    if MODEL is not None:
         return
     
-    # Get base directory
-    base_dir = Path(__file__).resolve().parent.parent
-    models_dir = base_dir / "models"
-    
     try:
+        base_dir = Path(__file__).resolve().parent.parent
+        models_dir = base_dir / "models"
+        
+        # Load SVM model (best model, pure Python)
+        MODEL = joblib.load(models_dir / "svm.joblib")
+        
         # Load performance data
         with open(models_dir / "model_performance.json", 'r') as f:
             performance_data = json.load(f)
         
-        # Find best model
-        sorted_models = sorted(performance_data, key=lambda x: x['r2'], reverse=True)
-        BEST_MODEL = sorted_models[0]['model']
-        
-        # Model files
-        model_files = {
-            'svm': 'svm.joblib',
-            'random_forest': 'random_forest.joblib',
-            'xgboost': 'xgboost.joblib',
-            'lightgbm': 'lightgbm.joblib',
-            'ann_mlp': 'ann_mlp.joblib'
-        }
-        
-        # Load each model
+        # Get SVM info
         for model_data in performance_data:
-            model_name = model_data['model']
-            if model_name in model_files:
-                model_path = models_dir / model_files[model_name]
-                if model_path.exists():
-                    MODELS[model_name] = joblib.load(model_path)
-                    MODEL_INFO[model_name] = {
-                        'name': model_name.replace('_', ' ').title(),
-                        'r2': model_data['r2'],
-                        'rmse': model_data['rmse'],
-                        'mae': model_data['mae']
-                    }
+            if model_data['model'] == 'svm':
+                MODEL_INFO = {
+                    'name': 'SVM',
+                    'r2': model_data['r2'],
+                    'rmse': model_data['rmse'],
+                    'mae': model_data['mae']
+                }
+                break
     except Exception as e:
-        print(f"Error loading models: {e}", file=sys.stderr)
+        print(f"Error loading model: {e}", file=sys.stderr)
         raise
 
 class handler(BaseHTTPRequestHandler):
@@ -75,42 +58,26 @@ class handler(BaseHTTPRequestHandler):
         self.end_headers()
     
     def do_POST(self):
-        """Handle POST requests for predictions."""
+        """Handle POST requests."""
         try:
-            # Load models
-            load_models()
+            # Load model
+            load_svm_model()
             
-            # Read request body
+            # Read request
             content_length = int(self.headers.get('Content-Length', 0))
-            if content_length == 0:
-                self.send_json_response({
-                    'success': False,
-                    'error': 'No data provided'
-                }, 400)
-                return
-            
             body = self.rfile.read(content_length)
             data = json.loads(body.decode('utf-8'))
             
-            model_name = data.get('model', BEST_MODEL)
             features = data.get('features', {})
             
-            # Validate model
-            if model_name not in MODELS:
-                self.send_json_response({
-                    'success': False,
-                    'error': f'Model "{model_name}" not found. Available: {list(MODELS.keys())}'
-                }, 400)
-                return
-            
-            # Prepare feature dictionary with metadata
+            # Prepare features (30 total: 27 material + 3 metadata)
             feature_dict = {
                 'mine_label': 'Bicholim Mine A',
                 'season': 'pre_monsoon',
                 'point_index': 1
             }
             
-            # Feature names (27 material properties)
+            # Material properties
             feature_names = [
                 'laterite_cohesion_kpa', 'laterite_friction_angle_deg', 'laterite_unit_weight_kn_per_m3',
                 'phyllitic_clay_cohesion_kpa', 'phyllitic_clay_friction_angle_deg', 'phyllitic_clay_unit_weight_kn_per_m3',
@@ -123,49 +90,37 @@ class handler(BaseHTTPRequestHandler):
                 'mean_cohesion_kpa', 'mean_friction_angle_deg', 'mean_unit_weight_kn_per_m3'
             ]
             
-            # Add material features
-            for feature_name in feature_names:
-                value = features.get(feature_name, 0.0)
+            for name in feature_names:
                 try:
-                    feature_dict[feature_name] = float(value)
+                    feature_dict[name] = float(features.get(name, 0.0))
                 except (ValueError, TypeError):
-                    feature_dict[feature_name] = 0.0
+                    feature_dict[name] = 0.0
             
             # Create DataFrame
             X = pd.DataFrame([feature_dict])
             
-            # Make prediction
-            model = MODELS[model_name]
-            prediction = model.predict(X)[0]
+            # Predict
+            prediction = MODEL.predict(X)[0]
             
-            # Get model info
-            model_info = MODEL_INFO[model_name]
-            
-            # Send response
+            # Response
             response_data = {
                 'success': True,
                 'prediction': float(prediction),
-                'model_used': model_info['name'],
-                'model_r2': float(model_info['r2']),
-                'model_rmse': float(model_info['rmse']),
-                'model_mae': float(model_info['mae'])
+                'model_used': MODEL_INFO['name'],
+                'model_r2': float(MODEL_INFO['r2']),
+                'model_rmse': float(MODEL_INFO['rmse']),
+                'model_mae': float(MODEL_INFO['mae'])
             }
             
             self.send_json_response(response_data)
             
-        except json.JSONDecodeError as e:
-            self.send_json_response({
-                'success': False,
-                'error': f'Invalid JSON: {str(e)}'
-            }, 400)
         except Exception as e:
             import traceback
             error_trace = traceback.format_exc()
-            print(f"Error in prediction: {error_trace}", file=sys.stderr)
+            print(f"Error: {error_trace}", file=sys.stderr)
             self.send_json_response({
                 'success': False,
-                'error': str(e),
-                'trace': error_trace
+                'error': str(e)
             }, 500)
     
     def send_json_response(self, data, status=200):
@@ -173,9 +128,5 @@ class handler(BaseHTTPRequestHandler):
         self.send_response(status)
         self.send_header('Content-Type', 'application/json')
         self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         self.end_headers()
-        
-        response_text = json.dumps(data)
-        self.wfile.write(response_text.encode('utf-8'))
+        self.wfile.write(json.dumps(data).encode('utf-8'))
