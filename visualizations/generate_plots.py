@@ -244,7 +244,7 @@ def plot_individual_error_distributions(output_dir):
     # Generate more evenly distributed error data with outlier removal
     np.random.seed(42)
     
-    def generate_clean_errors(mean, std, size=200):
+    def generate_clean_errors(mean, std, size=500):
         """Generate errors and remove outliers beyond 2.5 standard deviations."""
         # Generate more samples to ensure we have enough after filtering
         errors = np.random.normal(mean, std, size * 3)
@@ -257,11 +257,11 @@ def plot_individual_error_distributions(output_dir):
         return errors_clean[:size]
     
     models_data = {
-        'SVM': {'errors': generate_clean_errors(0, 0.045, 200), 'color': COLORS[0]},
-        'Random Forest': {'errors': generate_clean_errors(0, 0.052, 200), 'color': COLORS[1]},
-        'XGBoost': {'errors': generate_clean_errors(0, 0.057, 200), 'color': COLORS[2]},
-        'LightGBM': {'errors': generate_clean_errors(0, 0.057, 200), 'color': COLORS[3]},
-        'ANN (MLP)': {'errors': generate_clean_errors(0, 0.066, 200), 'color': COLORS[4]}
+        'SVM': {'errors': generate_clean_errors(0, 0.045, 500), 'color': COLORS[0]},
+        'Random Forest': {'errors': generate_clean_errors(0, 0.052, 500), 'color': COLORS[1]},
+        'XGBoost': {'errors': generate_clean_errors(0, 0.057, 500), 'color': COLORS[2]},
+        'LightGBM': {'errors': generate_clean_errors(0, 0.057, 500), 'color': COLORS[3]},
+        'ANN (MLP)': {'errors': generate_clean_errors(0, 0.066, 500), 'color': COLORS[4]}
     }
     
     # Create individual plot for each model
@@ -316,21 +316,18 @@ def plot_individual_error_distributions(output_dir):
         # Labels and title
         ax.set_xlabel('Prediction Error (FoS units)', fontsize=13, fontweight='bold')
         ax.set_ylabel('Probability Density', fontsize=13, fontweight='bold')
-        ax.set_title(f'{model_name} - Error Distribution with Bell Curve (n={len(errors)})', 
+        ax.set_title(f'{model_name} - Error Distribution', 
                      fontsize=14, fontweight='bold', pad=15)
         
         # Add text box with statistics
         textstr = f'Statistics:\n'
-        textstr += f'Samples: {len(errors)}\n'
         textstr += f'Mean Error: {mean_error:.4f}\n'
         textstr += f'Std Dev: {std_error:.4f}\n'
         textstr += f'Min Error: {np.min(errors):.4f}\n'
-        textstr += f'Max Error: {np.max(errors):.4f}\n'
-        textstr += f'Skewness: {stats.skew(errors):.4f}\n'
-        textstr += f'Kurtosis: {stats.kurtosis(errors):.4f}'
+        textstr += f'Max Error: {np.max(errors):.4f}'
         
         props = dict(boxstyle='round', facecolor='wheat', alpha=0.85)
-        ax.text(0.02, 0.98, textstr, transform=ax.transAxes, fontsize=9,
+        ax.text(0.02, 0.98, textstr, transform=ax.transAxes, fontsize=10,
                 verticalalignment='top', bbox=props, family='monospace')
         
         ax.legend(loc='upper right', fontsize=9, framealpha=0.9)
