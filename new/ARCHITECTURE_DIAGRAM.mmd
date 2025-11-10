@@ -1,0 +1,59 @@
+%% ARCHITECTURE DIAGRAM - FoS Prediction System
+%% Simple clean diagram - no colors, no extra styling
+
+flowchart TB
+    Input[DATA INPUT<br/>Pre-Monsoon: 180 samples<br/>Post-Monsoon: 181 samples<br/>Ru Values included<br/>Total: 361 samples]
+    
+    Ingest[DATA INGESTION<br/>data_ingestion.py<br/>Parse CSV<br/>Extract features: c, φ, γ, Ru]
+    
+    Split[TRAIN-TEST SPLIT<br/>80% / 20%<br/>random_state=42]
+    
+    Train[TRAINING SET<br/>288 samples<br/>Shape: 288, 4]
+    
+    Test[TEST SET<br/>73 samples<br/>Shape: 73, 4<br/>HELD OUT]
+    
+    Scale[STANDARD SCALER<br/>Fit on training<br/>Mean=0, Std=1]
+    
+    Models[TRAIN 6 MODELS<br/>train_models.py]
+    
+    SVM[SVM<br/>R²=0.9570]
+    RF[Random Forest<br/>R²=0.9924]
+    XGB[XGBoost<br/>R²=0.9581<br/>Fine-tuned]
+    LGBM[LightGBM<br/>R²=0.9872]
+    GB[Gradient Boosting<br/>R²=0.9954<br/>Fine-tuned]
+    ANN[ANN<br/>R²=0.9316]
+    
+    Select[SELECT TOP 2<br/>By training R²<br/>1. Gradient Boosting<br/>2. XGBoost]
+    
+    Testing[TEST TOP 2 MODELS<br/>On 73 samples]
+    
+    GBResult[Gradient Boosting<br/>R²=0.9426<br/>RMSE=0.0834<br/>MAE=0.0563]
+    
+    XGBResult[XGBoost<br/>R²=0.9420<br/>RMSE=0.0838<br/>MAE=0.0597]
+    
+    Output[OUTPUTS<br/>Models: .pkl files<br/>Results: CSV, Excel<br/>Visualizations: PNG<br/>Metadata: JSON]
+    
+    Input --> Ingest
+    Ingest --> Split
+    Split --> Train
+    Split --> Test
+    Train --> Scale
+    Scale --> Models
+    Models --> SVM
+    Models --> RF
+    Models --> XGB
+    Models --> LGBM
+    Models --> GB
+    Models --> ANN
+    SVM --> Select
+    RF --> Select
+    XGB --> Select
+    LGBM --> Select
+    GB --> Select
+    ANN --> Select
+    Select --> Testing
+    Test -.-> Testing
+    Testing --> GBResult
+    Testing --> XGBResult
+    GBResult --> Output
+    XGBResult --> Output

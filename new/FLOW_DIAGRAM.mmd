@@ -1,0 +1,58 @@
+%% FLOW DIAGRAM - Detailed Process Flow
+%% Simple clean diagram - no colors, no extra styling
+
+flowchart TD
+    Start[START]
+    
+    Step1[STEP 1: Load Data<br/>load_and_prepare_data<br/>data_ingestion.py<br/>Include Ru: Yes]
+    
+    Step2[STEP 2: Parse CSV<br/>Extract 361 samples<br/>Handle multiple sections]
+    
+    Step3[STEP 3: Extract Features<br/>Cohesion c<br/>Friction Angle φ<br/>Unit Weight γ<br/>Ru Pore Pressure Ratio<br/>Target: FoS<br/>Shape: 361, 4]
+    
+    Step4[STEP 4: Train-Test Split<br/>80% / 20%<br/>random_state=42]
+    
+    Train[TRAINING DATA<br/>288 samples 80%<br/>X_train: 288, 4<br/>y_train: 288]
+    
+    Test[TESTING DATA<br/>73 samples 20%<br/>X_test: 73, 4<br/>y_test: 73<br/>HELD OUT]
+    
+    Step5[STEP 5: Fit StandardScaler<br/>Fit on training only<br/>Calculate mean and std<br/>Transform training data]
+    
+    Step6[STEP 6: Train 6 Models<br/>train_models.py<br/>1. SVM<br/>2. Random Forest<br/>3. XGBoost Fine-tuned<br/>4. LightGBM<br/>5. Gradient Boosting Fine-tuned<br/>6. ANN]
+    
+    Step7[STEP 7: Evaluate Training<br/>Calculate R², RMSE, MAE<br/>for each model]
+    
+    Step8[Training Results<br/>Gradient Boosting: R²=0.9954<br/>Random Forest: R²=0.9924<br/>LightGBM: R²=0.9872<br/>XGBoost: R²=0.9581<br/>SVM: R²=0.9570<br/>ANN: R²=0.9316]
+    
+    Step9[STEP 8: Select Top 2<br/>Gradient Boosting 0.9954<br/>XGBoost 0.9581<br/>Other 4 NOT tested]
+    
+    Step10[STEP 9: Scale Test Data<br/>Transform using training scaler<br/>NO fitting on test<br/>Prevents data leakage]
+    
+    Step11[STEP 10: Test Top 2 Models<br/>Gradient Boosting:<br/>R²=0.9426 RMSE=0.0834 MAE=0.0563<br/>XGBoost:<br/>R²=0.9420 RMSE=0.0838 MAE=0.0597]
+    
+    Step12[STEP 11: Save Models<br/>6 model .pkl files<br/>scaler.pkl<br/>best models]
+    
+    Step13[STEP 12: Generate Results<br/>training_results.csv<br/>test_results.csv<br/>test_predictions csv<br/>all_results.xlsx<br/>JSON metadata]
+    
+    Step14[STEP 13: Create Visualizations<br/>8 PNG files<br/>Charts and graphs<br/>Comparisons]
+    
+    End[END]
+    
+    Start --> Step1
+    Step1 --> Step2
+    Step2 --> Step3
+    Step3 --> Step4
+    Step4 --> Train
+    Step4 --> Test
+    Train --> Step5
+    Step5 --> Step6
+    Step6 --> Step7
+    Step7 --> Step8
+    Step8 --> Step9
+    Step9 --> Step10
+    Test -.-> Step10
+    Step10 --> Step11
+    Step11 --> Step12
+    Step12 --> Step13
+    Step13 --> Step14
+    Step14 --> End

@@ -1,0 +1,44 @@
+%% DATA FLOW DIAGRAM - Data Transformation Pipeline
+%% Simple clean diagram - no colors, no extra styling
+
+flowchart LR
+    Raw[RAW CSV<br/>Overall Data.csv<br/>361 samples]
+    
+    Parsed[PARSED DATA<br/>Shape: 361, 4<br/>Features: c, φ, γ, Ru<br/>Target: FoS]
+    
+    Split[SPLIT<br/>80/20]
+    
+    Train[TRAIN SET<br/>288, 4<br/>80%]
+    
+    Test[TEST SET<br/>73, 4<br/>20%<br/>HELD OUT]
+    
+    ScalerFit[FIT SCALER<br/>StandardScaler<br/>Calculate mean, std<br/>From training only]
+    
+    TrainScaled[SCALED TRAIN<br/>288, 4<br/>z = x-μ / σ<br/>Mean=0 Std=1]
+    
+    TestScaled[SCALED TEST<br/>73, 4<br/>Transform only<br/>Use training μ, σ<br/>No fitting]
+    
+    Models[TRAIN 6 MODELS<br/>Input: 288, 4<br/>SVM, RF, XGB<br/>LGBM, GB, ANN]
+    
+    TrainPred[TRAIN PREDICTIONS<br/>Shape: 288<br/>6 models<br/>Evaluate each]
+    
+    Select[SELECT TOP 2<br/>By R² score<br/>1. GB<br/>2. XGBoost]
+    
+    TestPred[TEST PREDICTIONS<br/>Shape: 73<br/>2 models only<br/>GB: 0.9426<br/>XGB: 0.9420]
+    
+    Output[OUTPUTS<br/>6 pkl files<br/>scaler.pkl<br/>CSV, Excel<br/>PNG, JSON]
+    
+    Raw --> Parsed
+    Parsed --> Split
+    Split --> Train
+    Split --> Test
+    Train --> ScalerFit
+    ScalerFit --> TrainScaled
+    Test --> TestScaled
+    ScalerFit -.-> TestScaled
+    TrainScaled --> Models
+    Models --> TrainPred
+    TrainPred --> Select
+    TestScaled -.-> TestPred
+    Select -.-> TestPred
+    TestPred --> Output
