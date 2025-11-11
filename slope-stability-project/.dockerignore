@@ -1,0 +1,69 @@
+# Docker ignore file to reduce build context
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Logs
+*.log
+logs/
+nohup.out
+
+# Test files
+test/
+tests/
+*.test.js
+*.spec.js
+
+# Documentation
+*.md
+docs/
+README.md
+
+# Data files (keep only models)
+new/data/
+new/results/
+new/visualizations/
+*.csv
+*.xlsx
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Environment files
+.env
+.env.local
+.env.*.local

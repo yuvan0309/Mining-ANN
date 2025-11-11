@@ -95,18 +95,178 @@ def get_models():
     })
 
 
+def predict_multi_layer(data):
+    """
+    Handle multi-layer prediction by computing weighted average
+    """
+    try:
+        layers = data['layers']
+        model_choice = data.get('model', 'gradient_boosting')
+        
+        if not layers or len(layers) == 0:
+            return jsonify({'error': 'No layers provided'}), 400
+        
+        # Select model
+        if model_choice == 'xgboost':
+            model = xgb_model
+            model_name = 'XGBoost'
+            model_metrics = MODEL_INFO['xgboost']
+        else:
+            model = gb_model
+            model_name = 'Gradient Boosting'
+            model_metrics = MODEL_INFO['gradient_boosting']
+        
+        # Store individual layer predictions
+        layer_predictions = []
+        total_weight = 0
+        weighted_fos_sum = 0
+        
+        for idx, layer in enumerate(layers):
+            # Validate layer data
+            required_fields = ['name', 'cohesion', 'friction_angle', 'unit_weight', 'ru']
+            for field in required_fields:
+                if field not in layer:
+                    return jsonify({
+                        'error': f'Missing required field "{field}" in layer {idx + 1}'
+                    }), 400
+            
+            # Extract layer properties
+            cohesion = float(layer['cohesion'])
+            friction_angle = float(layer['friction_angle'])
+            unit_weight = float(layer['unit_weight'])
+            ru = float(layer['ru'])
+            
+            # Validate ranges
+            if not (0 <= cohesion <= 100):
+                return jsonify({'error': f'Layer {layer["name"]}: Cohesion must be between 0 and 100 kPa'}), 400
+            if not (0 <= friction_angle <= 45):
+                return jsonify({'error': f'Layer {layer["name"]}: Friction angle must be between 0 and 45 degrees'}), 400
+            if not (15 <= unit_weight <= 25):
+                return jsonify({'error': f'Layer {layer["name"]}: Unit weight must be between 15 and 25 kN/m³'}), 400
+            if not (0 <= ru <= 1):
+                return jsonify({'error': f'Layer {layer["name"]}: Ru must be between 0 and 1'}), 400
+            
+            # Prepare features and predict
+            features = np.array([[cohesion, friction_angle, unit_weight, ru]])
+            features_scaled = scaler.transform(features)
+            fos_prediction = float(model.predict(features_scaled)[0])
+            
+            # Store layer prediction
+            layer_predictions.append({
+                'name': layer['name'],
+                'fos': round(fos_prediction, 4),
+                'properties': {
+                    'cohesion': cohesion,
+                    'friction_angle': friction_angle,
+                    'unit_weight': unit_weight,
+                    'ru': ru
+                }
+            })
+            
+            # Calculate weighted average (using unit weight as weight factor)
+            total_weight += unit_weight
+            weighted_fos_sum += fos_prediction * unit_weight
+        
+        # Calculate overall FoS (weighted average)
+        overall_fos = weighted_fos_sum / total_weight
+        
+        # Calculate confidence interval
+        rmse = model_metrics['test_rmse']
+        confidence_lower = float(max(0, overall_fos - 1.96 * rmse))
+        confidence_upper = float(overall_fos + 1.96 * rmse)
+        
+        # Safety assessment
+        if overall_fos < 1.0:
+            safety_status = 'CRITICAL'
+            safety_message = 'Slope is unstable - immediate action required'
+            safety_color = 'red'
+        elif overall_fos < 1.3:
+            safety_status = 'WARNING'
+            safety_message = 'Slope stability is marginal - review required'
+            safety_color = 'orange'
+        elif overall_fos < 1.5:
+            safety_status = 'CAUTION'
+            safety_message = 'Slope is stable but monitor conditions'
+            safety_color = 'yellow'
+        else:
+            safety_status = 'SAFE'
+            safety_message = 'Slope is stable'
+            safety_color = 'green'
+        
+        return jsonify({
+            'success': True,
+            'prediction_type': 'multi-layer',
+            'prediction': {
+                'fos': round(overall_fos, 4),
+                'confidence_interval': {
+                    'lower': round(confidence_lower, 4),
+                    'upper': round(confidence_upper, 4),
+                    'level': '95%'
+                }
+            },
+            'layers': layer_predictions,
+            'calculation_method': 'Weighted average by unit weight',
+            'safety': {
+                'status': safety_status,
+                'message': safety_message,
+                'color': safety_color
+            },
+            'model': {
+                'name': model_name,
+                'r2_score': model_metrics['test_r2'],
+                'rmse': model_metrics['test_rmse'],
+                'mae': model_metrics['test_mae']
+            }
+        })
+    
+    except ValueError as e:
+        return jsonify({
+            'error': 'Invalid input values',
+            'message': str(e)
+        }), 400
+    
+    except Exception as e:
+        return jsonify({
+            'error': 'Multi-layer prediction failed',
+            'message': str(e)
+        }), 500
+
+
 @app.route('/predict', methods=['POST'])
 def predict():
     """
     Make FoS prediction
     
-    Request body:
+    Supports both single layer and multi-layer predictions:
+    
+    Single layer request:
     {
         "cohesion": float,
         "friction_angle": float,
         "unit_weight": float,
         "ru": float (optional, default=0),
-        "model": "gradient_boosting" or "xgboost" (optional, default="gradient_boosting")
+        "model": "gradient_boosting" or "xgboost" (optional)
+    }
+    
+    Multi-layer request:
+    {
+        "layers": [
+            {
+                "name": "Laterite",
+                "cohesion": float,
+                "friction_angle": float,
+                "unit_weight": float,
+                "ru": float
+            },
+            {
+                "name": "Phyllitic Clay",
+                "cohesion": float,
+                "friction_angle": float,
+                "unit_weight": float,
+                "ru": float
+            }
+        ],
+        "model": "gradient_boosting" or "xgboost" (optional)
     }
     """
     try:
@@ -120,6 +280,11 @@ def predict():
         # Get request data
         data = request.get_json()
         
+        # Check if multi-layer request
+        if 'layers' in data:
+            return predict_multi_layer(data)
+        
+        # Single layer prediction (original behavior)
         # Validate required fields
         required_fields = ['cohesion', 'friction_angle', 'unit_weight']
         for field in required_fields:

@@ -39,28 +39,62 @@
       </div>
     </div>
     
-    <!-- Input Parameters -->
-    <div class="parameters-card">
-      <h3>Input Parameters</h3>
-      <div class="parameters-grid">
-        <div class="param-item">
-          <span class="param-label">Cohesion</span>
-          <span class="param-value">{result.inputs.cohesion} kPa</span>
-        </div>
-        <div class="param-item">
-          <span class="param-label">Friction Angle</span>
-          <span class="param-value">{result.inputs.friction_angle}°</span>
-        </div>
-        <div class="param-item">
-          <span class="param-label">Unit Weight</span>
-          <span class="param-value">{result.inputs.unit_weight} kN/m³</span>
-        </div>
-        <div class="param-item highlight">
-          <span class="param-label">Ru (Pore Pressure)</span>
-          <span class="param-value">{result.inputs.ru}</span>
+    <!-- Layer Information (Multi-layer mode) -->
+    {#if result.prediction_type === 'multi-layer' && result.layers}
+      <div class="layers-card">
+        <h3>🪨 Layer Analysis</h3>
+        <p class="layers-subtitle">
+          <strong>Method:</strong> {result.calculation_method}
+        </p>
+        <div class="layers-grid">
+          {#each result.layers as layer, index}
+            <div class="layer-result">
+              <div class="layer-name">{layer.name}</div>
+              <div class="layer-fos">FoS: <strong>{layer.fos}</strong></div>
+              <div class="layer-properties">
+                <div class="layer-prop">
+                  <span>c: {layer.properties.cohesion} kPa</span>
+                </div>
+                <div class="layer-prop">
+                  <span>φ: {layer.properties.friction_angle}°</span>
+                </div>
+                <div class="layer-prop">
+                  <span>γ: {layer.properties.unit_weight} kN/m³</span>
+                </div>
+                <div class="layer-prop highlight-ru">
+                  <span>Ru: {layer.properties.ru}</span>
+                </div>
+              </div>
+            </div>
+          {/each}
         </div>
       </div>
-    </div>
+    {/if}
+    
+    <!-- Input Parameters (Single layer mode) -->
+    {#if result.inputs}
+      <div class="parameters-card">
+        <h3>Input Parameters</h3>
+        <div class="parameters-grid">
+          <div class="param-item">
+            <span class="param-label">Cohesion</span>
+            <span class="param-value">{result.inputs.cohesion} kPa</span>
+          </div>
+          <div class="param-item">
+            <span class="param-label">Friction Angle</span>
+            <span class="param-value">{result.inputs.friction_angle}°</span>
+          </div>
+          <div class="param-item">
+            <span class="param-label">Unit Weight</span>
+            <span class="param-value">{result.inputs.unit_weight} kN/m³</span>
+          </div>
+          <div class="param-item highlight">
+            <span class="param-label">Ru (Pore Pressure)</span>
+            <span class="param-value">{result.inputs.ru}</span>
+          </div>
+        </div>
+      </div>
+    {/if}
     
     <!-- Model Information -->
     <div class="model-card">
@@ -263,6 +297,87 @@
     font-size: 0.95rem;
     font-weight: 600;
     color: var(--text-primary);
+  }
+  
+  /* Multi-layer styles */
+  .layers-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 2px solid #e0e0e0;
+    margin-bottom: 1.5rem;
+  }
+  
+  .layers-card h3 {
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+  
+  .layers-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+  }
+  
+  .layers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+  
+  .layer-result {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 2px solid #dee2e6;
+    border-radius: 10px;
+    padding: 1rem;
+    transition: all 0.3s;
+  }
+  
+  .layer-result:hover {
+    border-color: #3498db;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+  }
+  
+  .layer-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+  }
+  
+  .layer-fos {
+    font-size: 1.3rem;
+    color: #3498db;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #dee2e6;
+  }
+  
+  .layer-fos strong {
+    font-weight: 800;
+  }
+  
+  .layer-properties {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+  
+  .layer-prop {
+    background: white;
+    padding: 0.5rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: #495057;
+    border: 1px solid #e9ecef;
+  }
+  
+  .layer-prop.highlight-ru {
+    background: #fff3cd;
+    border-color: #ffc107;
+    font-weight: 600;
+    grid-column: 1 / -1;
   }
   
   .model-metrics {

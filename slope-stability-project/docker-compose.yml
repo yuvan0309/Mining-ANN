@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  # Backend service (Flask API)
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: slope-stability-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - PYTHONUNBUFFERED=1
+    volumes:
+      # Mount models directory to persist trained models
+      - ./web-app/backend/models:/app/models:ro
+    restart: unless-stopped
+    networks:
+      - slope-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Frontend service (Svelte + Vite)
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: slope-stability-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://localhost:5000
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - slope-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+networks:
+  slope-network:
+    driver: bridge
+
+volumes:
+  models-data:
+    driver: local

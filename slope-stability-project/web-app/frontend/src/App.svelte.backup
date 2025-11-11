@@ -1,0 +1,751 @@
+<script>
+  import axios from 'axios';
+
+  const API_URL = 'http://localhost:5000';
+  
+  // Top 2 best performing models
+  const models = [
+    { name: 'Gradient Boosting', value: 'gradient_boosting', r2: 0.9426, best: true },
+    { name: 'XGBoost', value: 'xgboost', r2: 0.9420, best: false }
+  ];
+
+  let selectedModel = 'gradient_boosting';
+  
+  // Layer 1 - Laterite
+  let layer1Cohesion = '23.33';
+  let layer1Friction = '23.07';
+  let layer1Weight = '22.35';
+  
+  // Layer 2 - Phyllitic Clay
+  let layer2Cohesion = '15.73';
+  let layer2Friction = '19.70';
+  let layer2Weight = '18.76';
+  
+  // Layer 3 - Weathered Rock
+  let layer3Cohesion = '35.00';
+  let layer3Friction = '28.50';
+  let layer3Weight = '24.00';
+  
+  // Layer 4 - Sandy Soil
+  let layer4Cohesion = '5.20';
+  let layer4Friction = '32.00';
+  let layer4Weight = '18.50';
+  
+  // Layer 5 - Silty Clay
+  let layer5Cohesion = '18.60';
+  let layer5Friction = '22.40';
+  let layer5Weight = '19.80';
+  
+  // Layer 6 - Gravel
+  let layer6Cohesion = '8.50';
+  let layer6Friction = '35.20';
+  let layer6Weight = '20.40';
+  
+  // Layer 7 - Decomposed Granite
+  let layer7Cohesion = '28.40';
+  let layer7Friction = '31.80';
+  let layer7Weight = '21.60';
+  
+  // Layer 8 - Hard Rock
+  let layer8Cohesion = '45.00';
+  let layer8Friction = '38.50';
+  let layer8Weight = '26.00';
+  
+  let prediction = null;
+  let loading = false;
+  let error = null;
+
+  async function handlePredict() {
+    if (!layer1Cohesion || !layer1Friction || !layer1Weight) {
+      error = 'Please fill in all required fields';
+      return;
+    }
+
+    loading = true;
+    error = null;
+
+    try {
+      // Use average of all 8 layers for prediction
+      const avgCohesion = (
+        parseFloat(layer1Cohesion) + parseFloat(layer2Cohesion) + parseFloat(layer3Cohesion) + 
+        parseFloat(layer4Cohesion) + parseFloat(layer5Cohesion) + parseFloat(layer6Cohesion) + 
+        parseFloat(layer7Cohesion) + parseFloat(layer8Cohesion)
+      ) / 8;
+      
+      const avgFriction = (
+        parseFloat(layer1Friction) + parseFloat(layer2Friction) + parseFloat(layer3Friction) + 
+        parseFloat(layer4Friction) + parseFloat(layer5Friction) + parseFloat(layer6Friction) + 
+        parseFloat(layer7Friction) + parseFloat(layer8Friction)
+      ) / 8;
+      
+      const avgWeight = (
+        parseFloat(layer1Weight) + parseFloat(layer2Weight) + parseFloat(layer3Weight) + 
+        parseFloat(layer4Weight) + parseFloat(layer5Weight) + parseFloat(layer6Weight) + 
+        parseFloat(layer7Weight) + parseFloat(layer8Weight)
+      ) / 8;
+      
+      const response = await axios.post(`${API_URL}/predict`, {
+        cohesion: avgCohesion,
+        friction_angle: avgFriction,
+        unit_weight: avgWeight,
+        ru: 0,
+        model: selectedModel
+      });
+
+      prediction = response.data;
+    } catch (err) {
+      error = err.response?.data?.error || 'Failed to get prediction';
+    } finally {
+      loading = false;
+    }
+  }
+
+  function loadSample() {
+    layer1Cohesion = '23.33'; layer1Friction = '23.07'; layer1Weight = '22.35';
+    layer2Cohesion = '15.73'; layer2Friction = '19.70'; layer2Weight = '18.76';
+    layer3Cohesion = '35.00'; layer3Friction = '28.50'; layer3Weight = '24.00';
+    layer4Cohesion = '5.20'; layer4Friction = '32.00'; layer4Weight = '18.50';
+    layer5Cohesion = '18.60'; layer5Friction = '22.40'; layer5Weight = '19.80';
+    layer6Cohesion = '8.50'; layer6Friction = '35.20'; layer6Weight = '20.40';
+    layer7Cohesion = '28.40'; layer7Friction = '31.80'; layer7Weight = '21.60';
+    layer8Cohesion = '45.00'; layer8Friction = '38.50'; layer8Weight = '26.00';
+  }
+
+  function getFosStatus(fos) {
+    if (fos > 1.5) return { text: 'Safe - Excellent stability', color: '#22c55e' };
+    if (fos >= 1.2) return { text: 'WARNING - Monitor closely', color: '#f59e0b' };
+    return { text: 'Unsafe - Critical condition', color: '#ef4444' };
+  }
+
+  $: selectedModelData = models.find(m => m.value === selectedModel);
+  $: fosStatus = prediction ? getFosStatus(prediction.fos) : null;
+</script>
+
+<main>
+  <header>
+    <h1>Factor of Safety (FoS) Prediction System</h1>
+    <p>Machine Learning-Based Mining Slope Stability Analysis</p>
+  </header>
+
+  <div class="container">
+    <div class="left-panel">
+      <section class="model-section">
+        <h2>Select Prediction Model</h2>
+        <div class="model-grid">
+          {#each models as model}
+            <button 
+              class="model-btn" 
+              class:selected={selectedModel === model.value}
+              on:click={() => selectedModel = model.value}
+            >
+              <span class="model-name">{model.name}</span>
+              <span class="model-r2">R² = {model.r2.toFixed(4)}</span>
+              {#if model.best}
+                <span class="best-badge">⭐ BEST</span>
+              {/if}
+            </button>
+          {/each}
+        </div>
+      </section>
+
+      <div class="info-tip">
+        <strong>Quick Start:</strong> Enter material properties for all 8 soil layers or click "Load Sample Data". Best performing model is pre-selected.
+      </div>
+
+            <section class="layer-section layer1">
+        <h2>Laterite</h2>
+        <div class="input-grid">
+          <label>Cohesion (kPa)<input type="number" step="0.01" bind:value={layer1Cohesion} /></label>
+          <label>Friction Angle (°)<input type="number" step="0.01" bind:value={layer1Friction} /></label>
+          <label>Unit Weight (kN/m³)<input type="number" step="0.01" bind:value={layer1Weight} /></label>
+        </div>
+      </section>
+
+      <section class="layer-section layer2">
+        <h2>Phyllitic Clay</h2>
+        <div class="input-grid">
+          <label>Cohesion (kPa)<input type="number" step="0.01" bind:value={layer2Cohesion} /></label>
+          <label>Friction Angle (°)<input type="number" step="0.01" bind:value={layer2Friction} /></label>
+          <label>Unit Weight (kN/m³)<input type="number" step="0.01" bind:value={layer2Weight} /></label>
+        </div>
+      </section>
+
+      <section class="layer-section layer3">
+        <h2>Lumpy Iron Ore</h2>
+        <div class="input-grid">
+          <label>Cohesion (kPa)<input type="number" step="0.01" bind:value={layer3Cohesion} /></label>
+          <label>Friction Angle (°)<input type="number" step="0.01" bind:value={layer3Friction} /></label>
+          <label>Unit Weight (kN/m³)<input type="number" step="0.01" bind:value={layer3Weight} /></label>
+        </div>
+      </section>
+
+      <section class="layer-section layer4">
+        <h2>Limonitic Clay</h2>
+        <div class="input-grid">
+          <label>Cohesion (kPa)<input type="number" step="0.01" bind:value={layer4Cohesion} /></label>
+          <label>Friction Angle (°)<input type="number" step="0.01" bind:value={layer4Friction} /></label>
+          <label>Unit Weight (kN/m³)<input type="number" step="0.01" bind:value={layer4Weight} /></label>
+        </div>
+      </section>
+
+      <section class="layer-section layer5">
+        <h2>Manganiferous Clay</h2>
+        <div class="input-grid">
+          <label>Cohesion (kPa)<input type="number" step="0.01" bind:value={layer5Cohesion} /></label>
+          <label>Friction Angle (°)<input type="number" step="0.01" bind:value={layer5Friction} /></label>
+          <label>Unit Weight (kN/m³)<input type="number" step="0.01" bind:value={layer5Weight} /></label>
+        </div>
+      </section>
+
+      <section class="layer-section layer6">
+        <h2>Siliceous Clay</h2>
+        <div class="input-grid">
+          <label>Cohesion (kPa)<input type="number" step="0.01" bind:value={layer6Cohesion} /></label>
+          <label>Friction Angle (°)<input type="number" step="0.01" bind:value={layer6Friction} /></label>
+          <label>Unit Weight (kN/m³)<input type="number" step="0.01" bind:value={layer6Weight} /></label>
+        </div>
+      </section>
+
+      <section class="layer-section layer7">
+        <h2>BHQ</h2>
+        <div class="input-grid">
+          <label>Cohesion (kPa)<input type="number" step="0.01" bind:value={layer7Cohesion} /></label>
+          <label>Friction Angle (°)<input type="number" step="0.01" bind:value={layer7Friction} /></label>
+          <label>Unit Weight (kN/m³)<input type="number" step="0.01" bind:value={layer7Weight} /></label>
+        </div>
+      </section>
+
+                  <section class="layer-section layer8">
+        <h2>Schist</h2>
+        <div class="input-grid">
+          <label>Cohesion (kPa)<input type="number" step="0.01" bind:value={layer8Cohesion} /></label>
+          <label>Friction Angle (°)<input type="number" step="0.01" bind:value={layer8Friction} /></label>
+          <label>Unit Weight (kN/m³)<input type="number" step="0.01" bind:value={layer8Weight} /></label>
+        </div>
+      </section>
+
+      <div class="btn-row">
+
+      <section class="layer-section layer2">
+        <h2>🟤 Phyllitic Clay</h2>
+        <div class="input-grid">
+          <label>Cohesion (kPa)<input type="number" step="0.01" bind:value={layer2Cohesion} /></label>
+          <label>Friction Angle (°)<input type="number" step="0.01" bind:value={layer2Friction} /></label>
+          <label>Unit Weight (kN/m³)<input type="number" step="0.01" bind:value={layer2Weight} /></label>
+        </div>
+      </section>
+
+      <section class="layer-section layer3">
+        <h2>🔶 Lumpy Iron Ore</h2>
+        <div class="input-grid">
+          <label>Cohesion (kPa)<input type="number" step="0.01" bind:value={layer3Cohesion} /></label>
+          <label>Friction Angle (°)<input type="number" step="0.01" bind:value={layer3Friction} /></label>
+          <label>Unit Weight (kN/m³)<input type="number" step="0.01" bind:value={layer3Weight} /></label>
+        </div>
+      </section>
+
+      <section class="layer-section layer4">
+        <h2>🟨 Limonitic Clay</h2>
+        <div class="input-grid">
+          <label>Cohesion (kPa)<input type="number" step="0.01" bind:value={layer4Cohesion} /></label>
+          <label>Friction Angle (°)<input type="number" step="0.01" bind:value={layer4Friction} /></label>
+          <label>Unit Weight (kN/m³)<input type="number" step="0.01" bind:value={layer4Weight} /></label>
+        </div>
+      </section>
+
+      <section class="layer-section layer5">
+        <h2>🟫 Manganiferous Clay</h2>
+        <div class="input-grid">
+          <label>Cohesion (kPa)<input type="number" step="0.01" bind:value={layer5Cohesion} /></label>
+          <label>Friction Angle (°)<input type="number" step="0.01" bind:value={layer5Friction} /></label>
+          <label>Unit Weight (kN/m³)<input type="number" step="0.01" bind:value={layer5Weight} /></label>
+        </div>
+      </section>
+
+      <section class="layer-section layer6">
+        <h2>⚪ Siliceous Clay</h2>
+        <div class="input-grid">
+          <label>Cohesion (kPa)<input type="number" step="0.01" bind:value={layer6Cohesion} /></label>
+          <label>Friction Angle (°)<input type="number" step="0.01" bind:value={layer6Friction} /></label>
+          <label>Unit Weight (kN/m³)<input type="number" step="0.01" bind:value={layer6Weight} /></label>
+        </div>
+      </section>
+
+      <section class="layer-section layer7">
+        <h2>� BHQ</h2>
+        <div class="input-grid">
+          <label>Cohesion (kPa)<input type="number" step="0.01" bind:value={layer7Cohesion} /></label>
+          <label>Friction Angle (°)<input type="number" step="0.01" bind:value={layer7Friction} /></label>
+          <label>Unit Weight (kN/m³)<input type="number" step="0.01" bind:value={layer7Weight} /></label>
+        </div>
+      </section>
+
+      <section class="layer-section layer8">
+        <h2>⬛ Schist</h2>
+        <div class="input-grid">
+          <label>Cohesion (kPa)<input type="number" step="0.01" bind:value={layer8Cohesion} /></label>
+          <label>Friction Angle (°)<input type="number" step="0.01" bind:value={layer8Friction} /></label>
+          <label>Unit Weight (kN/m³)<input type="number" step="0.01" bind:value={layer8Weight} /></label>
+        </div>
+      </section>
+
+      <div class="btn-row">
+        <button class="btn-secondary" on:click={loadSample}>Load Sample Data</button>
+        <button class="btn-primary" on:click={handlePredict} disabled={loading}>
+          {loading ? '⏳ Calculating...' : 'Predict FoS'}
+        </button>
+      </div>
+
+      {#if error}
+        <div class="error">{error}</div>
+      {/if}
+    </div>
+
+    <div class="right-panel">
+      <section class="results">
+        <h2>Prediction Results</h2>
+        
+        {#if prediction}
+          <div class="fos-display">
+            <div class="fos-label">Predicted Factor of Safety</div>
+            <div class="fos-value" style="color: {fosStatus.color}">
+              {prediction.fos.toFixed(4)}
+            </div>
+            <div class="fos-status" style="background: {fosStatus.color}20; color: {fosStatus.color}">
+              ⚠ {fosStatus.text}
+            </div>
+          </div>
+
+          <div class="model-info">
+            <div class="info-row">
+              <span>Model Used:</span>
+              <strong>{selectedModelData.name}</strong>
+            </div>
+            <div class="info-row">
+              <span>Model R² Score:</span>
+              <strong>{selectedModelData.r2.toFixed(4)}</strong>
+            </div>
+            <div class="info-row">
+              <span>Model RMSE:</span>
+              <strong>0.0569</strong>
+            </div>
+            <div class="info-row">
+              <span>Model MAE:</span>
+              <strong>0.0405</strong>
+            </div>
+          </div>
+        {:else}
+          <div class="no-prediction">
+            <h3>No Prediction Yet</h3>
+            <p>Enter material properties for all layers and click "Predict FoS" to see results here.</p>
+          </div>
+        {/if}
+
+          <div class="about-fos">
+            <h3>About FoS</h3>
+            <p>The Factor of Safety (FoS) is a critical parameter in mining slope stability analysis:</p>
+          <ul>
+            <li><strong>FoS &gt; 1.5:</strong> Safe - Excellent stability</li>
+            <li><strong>FoS = 1.2-1.5:</strong> Warning - Monitor closely</li>
+            <li><strong>FoS &lt; 1.2:</strong> Unsafe - Immediate action required</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<style>
+  :global(body) {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, #5b7ef5 0%, #8b5cf6 50%, #a855f7 100%);
+    min-height: 100vh;
+  }
+
+  main {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  header {
+    text-align: center;
+    color: white;
+    margin-bottom: 25px;
+    padding: 25px 20px;
+    background: linear-gradient(135deg, rgba(91, 126, 245, 0.5) 0%, rgba(139, 92, 246, 0.5) 100%);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+  }
+
+  header h1 {
+    margin: 0 0 8px 0;
+    font-size: 2rem;
+    font-weight: 700;
+  }
+
+  header p {
+    margin: 0;
+    font-size: 1rem;
+    opacity: 0.95;
+  }
+
+  .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .left-panel, .right-panel {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+  }
+
+  .left-panel {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+  }
+
+  .left-panel::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .left-panel::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+
+  .left-panel::-webkit-scrollbar-thumb {
+    background: #8b5cf6;
+    border-radius: 4px;
+  }
+
+  .left-panel::-webkit-scrollbar-thumb:hover {
+    background: #7c3aed;
+  }
+
+  section {
+    margin-bottom: 20px;
+  }
+
+  section:last-child {
+    margin-bottom: 0;
+  }
+
+  h2 {
+    margin: 0 0 15px 0;
+    font-size: 1.1rem;
+    color: #374151;
+    font-weight: 600;
+  }
+
+  h3 {
+    margin: 0 0 10px 0;
+    font-size: 1rem;
+    color: #374151;
+  }
+
+  .model-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .model-btn {
+    position: relative;
+    padding: 12px 15px;
+    border: 2px solid #d1d5db;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+  }
+
+  .model-btn:hover {
+    border-color: #8b5cf6;
+    transform: translateY(-1px);
+  }
+
+  .model-btn.selected {
+    border-color: #8b5cf6;
+    background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+  }
+
+  .model-btn.selected .model-name,
+  .model-btn.selected .model-r2 {
+    color: white;
+  }
+
+  .model-name {
+    display: block;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 3px;
+    font-size: 0.95rem;
+  }
+
+  .model-r2 {
+    display: block;
+    font-size: 0.8rem;
+    color: #6b7280;
+  }
+
+  .best-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: #fbbf24;
+    color: #78350f;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.65rem;
+    font-weight: 700;
+  }
+
+  .info-tip {
+    padding: 12px 15px;
+    background: #dbeafe;
+    border-left: 3px solid #3b82f6;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-size: 0.85rem;
+    color: #1e40af;
+  }
+
+  .layer-section {
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 2px solid #e5e7eb;
+    margin-bottom: 12px;
+  }
+
+  .layer-section.layer1 {
+    background: #fef3c7;
+    border-color: #fbbf24;
+  }
+
+  .layer-section.layer2 {
+    background: #fee2e2;
+    border-color: #ef4444;
+  }
+
+  .layer-section.layer3 {
+    background: #e0e7ff;
+    border-color: #6366f1;
+  }
+
+  .layer-section.layer4 {
+    background: #fef9c3;
+    border-color: #eab308;
+  }
+
+  .layer-section.layer5 {
+    background: #fce7f3;
+    border-color: #ec4899;
+  }
+
+  .layer-section.layer6 {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+  }
+
+  .layer-section.layer7 {
+    background: #fed7aa;
+    border-color: #f97316;
+  }
+
+  .layer-section.layer8 {
+    background: #e5e7eb;
+    border-color: #374151;
+  }
+
+  .layer-section h2 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+
+  .input-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  label {
+    display: block;
+    font-size: 0.85rem;
+    color: #374151;
+    font-weight: 500;
+    margin-bottom: 5px;
+  }
+
+  input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    box-sizing: border-box;
+    background: white;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  button {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+    color: white;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(139, 92, 246, 0.3);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .btn-secondary {
+    background: white;
+    border: 2px solid #d1d5db;
+    color: #374151;
+  }
+
+  .btn-secondary:hover {
+    border-color: #8b5cf6;
+    color: #8b5cf6;
+  }
+
+  .error {
+    margin-top: 15px;
+    padding: 12px;
+    background: #fee2e2;
+    border-left: 4px solid #ef4444;
+    border-radius: 8px;
+    color: #991b1b;
+  }
+
+  .fos-display {
+    text-align: center;
+    margin-bottom: 25px;
+  }
+
+  .fos-label {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin-bottom: 8px;
+  }
+
+  .fos-value {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .fos-status {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .model-info {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 0.9rem;
+  }
+
+  .info-row:last-child {
+    border-bottom: none;
+  }
+
+  .info-row span {
+    color: #6b7280;
+  }
+
+  .info-row strong {
+    color: #1f2937;
+  }
+
+  .about-fos {
+    background: #dbeafe;
+    border-radius: 8px;
+    padding: 15px;
+  }
+
+  .about-fos p {
+    margin: 8px 0;
+    color: #374151;
+    font-size: 0.85rem;
+  }
+
+  .about-fos ul {
+    margin: 8px 0;
+    padding-left: 20px;
+  }
+
+  .about-fos li {
+    margin: 6px 0;
+    color: #374151;
+    font-size: 0.85rem;
+  }
+
+  .no-prediction {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6b7280;
+  }
+
+  .no-prediction h3 {
+    color: #374151;
+    margin-bottom: 10px;
+  }
+
+  .no-prediction p {
+    font-size: 0.9rem;
+    color: #6b7280;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 1024px) {
+    .container {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

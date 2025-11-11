@@ -41,6 +41,7 @@ Thumbs.db
 
 # Visualizations
 *.png
+*.mmd
 *.jpg
 *.jpeg
 *.pdf
