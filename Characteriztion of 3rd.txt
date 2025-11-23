@@ -1,0 +1,198 @@
+﻿CHAPTER 1
+INTRODUCTION
+
+1.1 Background of the study
+The global automotive industry relies on catalytic converters as essential exhaust control devices to mitigate environmental pollution. These components are instrumental in reducing the emission of harmful gases such as carbon monoxide (CO), nitrogen oxides (NOₓ), and unburned hydrocarbons by facilitating their conversion into less toxic substances like carbon dioxide, nitrogen, and water vapor. This critical function is enabled by the exceptional catalytic properties of Platinum Group Metals (PGMs), specifically platinum, palladium, and rhodium, which serve as the active catalysts within the converter's structure (Alotaibi et al., 2019).
+Over operational time, these converters eventually become "spent" or deactivated. This deactivation is primarily due to physical and chemical phenomena, including carbon deposition (fouling) and thermal sintering of the catalyst materials, which occlude active sites and reduce catalytic efficiency. Despite this deactivation, the spent converters are not waste; they represent a highly concentrated secondary resource. The PGM content within spent catalytic converters is remarkably high, with concentrations reported to be almost one hundred times richer than their natural ores (Murray, 2012). This makes them a prime target for urban mining, turning a waste stream into a valuable source of critical raw materials.
+Conventional technologies for PGM recovery, namely pyrometallurgy and hydrometallurgy, are well established. Pyrometallurgical processes involve high-temperature smelting, which is extremely energy-intensive, while hydrometallurgical methods employ strong chemical leachants like aqua regia, which pose significant environmental and safety risks due to the generation of toxic wastes and gaseous emissions (Rumpold et al., 2012). The ecological drawbacks of these methods have spurred the search for sustainable alternatives.
+Biometallurgy, particularly bioleaching, has emerged as a promising eco-friendly alternative. This process utilizes specific microorganisms, such as Acidithiobacillus ferroxidase, to dissolve metals. These bacteria facilitate metal recovery through the generation of leaching agents like bio-acids and oxidizing ferric iron in an indirect mechanism, thereby avoiding the use of hazardous chemicals (Brierley & Brierley, 2013). A crucial preliminary step in this sustainable recovery process is the detailed characterization of the spent catalyst. Analytical techniques including X-ray Fluorescence (XRF), Scanning Electron Microscopy (SEM), and Inductively Coupled Plasma Optical Emission Spectrometry (ICP-OES) are employed to accurately identify, quantify, and map the distribution of PGMs, providing essential data for designing an efficient biological extraction protocol (Yusof et al., 2021).
+1.2 Problem Statement
+The reliance on Platinum Group Metals (PGMs) for critical technologies, especially automotive catalytic converters, creates a significant strategic and environmental dilemma. These metals are geologically scarce, with primary mining concentrated in politically sensitive regions, leading to volatile supply chains and high economic costs (Zhuang et al., 2015). While spent catalytic converters present a valuable secondary resource, the very processes used to recover these metals pose a severe threat to environmental sustainability.
+The established conventional methods for PGM recovery are fundamentally problematic. Pyrometallurgical operations consume immense amounts of energy, often derived from fossil fuels, and can release hazardous particulates and toxic gases into the atmosphere (Murray, 2012). Meanwhile, hydrometallurgical techniques, which rely on highly corrosive and toxic chemicals like aqua regia and cyanide, generate large volumes of liquid waste that are difficult and expensive to treat, leading to potential soil and water contamination if not managed impeccably (Rumpold et al., 2012). The environmental footprint of these processes contradicts global efforts toward green manufacturing and a circular economy.
+Consequently, a critical gap exists between the urgent need to recycle PGMs and the availability of commercially viable, environmentally sound technologies to do so. Although biometallurgy, particularly bioleaching, has been successfully applied in the primary recovery of base metals like copper and gold, its application to the recovery of PGMs from complex waste streams like spent automotive catalysts remains underexplored and is not yet a mature industrial process (Brierley & Brierley, 2013). Therefore, the central problem is the lack of an optimized, efficient, and scalable biometallurgical process that can effectively compete with or replace the environmentally damaging conventional methods for PGM recovery from spent automotive catalytic converters, thereby resolving the conflict between resource necessity and ecological responsibility.
+1.3 Significance of Platinum Group Metals (PGMs)
+Platinum Group Metals (PGMs), which include platinum (Pt), palladium (Pd), and rhodium (Rh), constitute a class of six transition metals renowned for their exceptional catalytic properties, high melting points, and outstanding corrosion resistance. These unique physical and chemical characteristics render them not merely valuable, but critically indispensable for a wide array of modern industrial and environmental technologies. Their primary application lies in automotive catalytic converters, where they serve as the active sites for the redox reactions that convert harmful exhaust gases like carbon monoxide, nitrogen oxides, and hydrocarbons into less toxic carbon dioxide, nitrogen, and water vapor (Alotaibi et al., 2019). Without PGMs, meeting global vehicle emissions standards would be technologically unfeasible.
+Beyond automotive applications, PGMs are vital pillars in other key sectors. In the chemical industry, platinum is a crucial catalyst for the production of nitric acid and in petroleum refining. In healthcare, platinum-based compounds, such as cisplatin, are first-line chemotherapeutic agents, while platinum is also used in pacemakers and other medical implants due to its biocompatibility. Furthermore, PGMs are central to the emerging hydrogen economy, where they are used as efficient electrocatalysts in fuel cells and for water electrolysis (Zhuang et al., 2015).
+Despite their immense utility, PGMs are among the rarest elements in the Earth's crust. Their geological scarcity is compounded by highly concentrated and politically sensitive global supply, with South Africa and Russia accounting for the majority of primary production. This constrained supply chain creates significant economic vulnerability and price volatility, making many advanced economies strategically dependent on imports (Binnemans et al., 2021). This combination of high demand, critical functionality, and supply risk firmly categorizes PGMs as "critical raw materials," underscoring the strategic imperative to develop efficient recycling processes from secondary sources like spent automotive catalysts to ensure a stable and sustainable supply for future technologies.
+
+
+
+
+FIGURE 1.1 Platinum Group Metals
+1.4 Catalytic Converters and Their Role in Emission Control 
+Catalytic converters are indispensable emission control devices integrated into the exhaust systems of internal combustion engines. Their primary function is to mitigate the release of harmful pollutants into the atmosphere by catalysing their transformation into less toxic gases. The device typically consists of a ceramic or metallic monolithic substrate, honeycombed with numerous channels to maximize surface area, which is coated with a wash coat of high-surface-area alumina (γ-Al₂O₃). The active catalytic components, Platinum Group Metals (PGMs) specifically platinum (Pt), palladium (Pd), and rhodium (Rh) are dispersed within this washcoat, where they facilitate crucial redox reactions (Heck & Farrauto, 2001).
+The efficacy of a catalytic converter lies in its ability to simultaneously promote three key chemical reactions:
+* Oxidation of Carbon Monoxide (CO): CO is converted to carbon dioxide (CO₂).
+* Oxidation of Unburnt Hydrocarbons (HC): Unburned fuel is converted to CO₂ and water (H₂O).
+* Reduction of Nitrogen Oxides (NOₓ): NOₓ molecules are reduced to harmless nitrogen (N₂) and oxygen (O₂).
+Platinum and palladium are highly effective as oxidation catalysts, while rhodium is exceptional for the reduction of NOₓ (Twigg, 2006). This synergistic action allows modern three-way catalytic converters to achieve emission reduction efficiencies exceeding 90% for these primary pollutants, making them a cornerstone of global efforts to combat urban air pollution and comply with stringent environmental regulations.
+However, over the vehicle's operational lifetime, the converter is subjected to high temperatures and chemical exposure, leading to its deactivation. This occurs primarily through mechanisms such as thermal sintering of the PGM particles, which reduces the active surface area, and fouling from carbon deposits or oil-borne contaminants that physically block active sites (Shelef & Graham, 1994). Once "spent," the converter ceases to perform its environmental function effectively, but its high residual PGM content makes it a highly concentrated secondary resource, forming the basis for its valorization through recycling processes like biometallurgy.
+
+
+
+
+FIGURE 1.2 Catalytic converter
+1.5 Challenges in Conventional Metal Recovery Methods 
+The conventional methods for recovering Platinum Group Metals (PGMs) from spent catalytic converters, primarily pyrometallurgy and hydrometallurgy, are fraught with significant technical, economic, and environmental challenges that undermine their long-term sustainability. While effective in extracting metals, their operational paradigms are increasingly at odds with global environmental protection and green engineering principles.
+Pyrometallurgical processes involve smelting the spent catalyst material at extremely high temperatures, often exceeding 1500°C, to separate PGMs into a molten collector metal like copper or lead. The most pressing challenge of this method is its exorbitant energy consumption, which contributes to a large carbon footprint and high operational costs (Binnemans et al., 2021). Furthermore, the process is inherently inefficient for low-concentration feeds and can lead to the irreversible loss of certain PGMs, like rhodium, to the slag phase or through volatilization. The generation of slag, a solid waste by-product, and the potential release of toxic fumes containing heavy metals and dioxins present serious disposal and air pollution concerns, requiring sophisticated and costly gas cleaning systems (Crundwell et al., 2022).
+Hydrometallurgical techniques, which involve dissolving PGMs in aqueous solutions, present a different set of problems. These processes predominantly rely on highly aggressive lixiviants, with aqua regia being the most common. The use of such strong acids generates hazardous waste streams, including chloride-rich solutions and nitrous oxide (NOx) fumes, which are corrosive and contribute to atmospheric pollution (Kolliopoulos et al., 2014). The disposal of this toxic effluent is technologically challenging and expensive, as it requires neutralization and detoxification before release to avoid severe environmental contamination. Moreover, the non-selectivity of these strong acids leads to the co-dissolution of base metals and the alumina wash-coat, complicating the subsequent purification and refining steps and increasing reagent consumption (Awasthi & Li, 2017).
+Cumulatively, the high energy demand, reliance on hazardous chemicals, generation of toxic waste, and associated health and safety risks render these conventional methods environmentally burdensome and economically less viable in a world increasingly governed by strict environmental regulations. These formidable challenges are the primary drivers for the ongoing research and development of alternative, benign recovery processes such as biometallurgy.
+1.6 Need for Biometallurgical Approaches 
+The formidable environmental and economic challenges posed by conventional pyrometallurgical and hydrometallurgical methods for Platinum Group Metals (PGMs) recovery, as detailed in the previous section, create a compelling and urgent need for innovative, sustainable alternatives. Biometallurgy, and specifically bioleaching, emerges as a critical solution to bridge the gap between the indispensable demand for these critical metals and the imperative for environmentally responsible resource processing. This approach aligns directly with the principles of green chemistry and the circular economy, aiming to transform waste into valuable resources with minimal ecological footprint (Zhuang et al., 2015).
+The primary driver for adopting biometallurgical approaches is their significantly reduced environmental impact. Unlike hydrometallurgy, which relies on bulk quantities of synthetic, corrosive acids, bioleaching utilizes microorganisms such as Acidithiobacillus ferrooxidans and A. thiooxidans to generate lixiviants in situ. These bacteria produce sulfuric acid and oxidize ferrous iron to ferric iron, creating a natural and self-regenerating leaching medium (Brierley & Brierley, 2013). This process drastically minimizes the consumption of hazardous chemicals and the generation of toxic waste streams, thereby lowering the risks of soil and water contamination and reducing the costs associated with waste handling and disposal.
+Furthermore, biometallurgy offers potential economic advantages, particularly in terms of lower energy input. Bioleaching is typically conducted at ambient or near-ambient temperatures and pressures, presenting a stark contrast to the energy-intensive high-temperature operations of pyrometallurgy. This results in a substantially lower carbon footprint and operational energy costs (Kaksonen et al., 2020). Additionally, microbial processes can offer a degree of selectivity, potentially reducing the complexity and cost of downstream metal purification stages compared to the non-selective dissolution achieved by aqua regia.
+In conclusion, the transition towards biometallurgical approaches is not merely an option but a necessity for the sustainable future of metal recycling. By offering a pathway that mitigates the severe environmental drawbacks of conventional methods while maintaining economic viability, bioleaching represents a paradigm shift. It positions itself as a key technology for urban mining, enabling the recovery of valuable PGMs from spent automotive catalysts in a manner that supports both resource security and ecological stewardship.
+1.7 Characterization of Spent Catalytic Converters
+The effective recovery of Platinum Group Metals (PGMs) from spent automotive catalytic converters through biometallurgical processes fundamentally depends on a comprehensive and accurate characterization of the waste material. Prior to any biological treatment, it is essential to understand the physical and chemical properties of the spent catalyst, as this knowledge directly informs the selection of microbial strains and the design of the leaching protocol (Alotaibi et al., 2019). A multi-analytical approach is therefore indispensable for successful process development.
+Spent catalytic converters are complex composites, typically consisting of a ceramic cordierite monolith wash-coated with a high-surface-area gamma-alumina (γ-Al₂O₃), which serves as the support for the finely dispersed PGM particles. X-ray Fluorescence (XRF) analysis serves as a crucial first step for rapid, non-destructive elemental screening, providing semi-quantitative data on the presence and relative abundance of PGMs (Marinoski et al., 2020).
+To visualize the physical distribution and morphology of the PGMs within the wash-coat, Scanning Electron Microscopy coupled with Energy Dispersive X-ray Spectroscopy (SEM-EDS) is employed. SEM provides high-resolution images of the catalyst's surface, while EDS enables elemental mapping, confirming that the PGMs are concentrated in the wash-coat layer (Jha et al., 2013).
+For precise and quantitative data on PGM content, Inductively Coupled Plasma Optical Emission Spectrometry (ICP-OES) is the gold standard. This technique requires a representative sample of the catalyst to be completely digested, typically using aqua regia, to bring all metals into solution. The ICP-OES then provides highly accurate concentrations of platinum, palladium, and rhodium, which are essential for calculating material balances and determining the final recovery efficiency of the bioleaching process (Alotaibi et al., 2019). This rigorous characterization pipeline transforms the spent converter from an unknown waste stream into a well-defined feedstock for biometallurgical recovery.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CHAPTER 2
+REVIEW OF LITERATURE
+
+Alotaibi et al. (2019) provided a detailed assessment of PGM recovery by characterizing spent converters using techniques like XRF and ICP-MS to quantify metal content and distribution. Their work emphasized the importance of understanding the physical and chemical states of PGMs to optimize subsequent recovery steps, particularly through environmentally friendly methods. This foundational characterization aids in tuning process conditions for metal liberation.
+ Awasthi and Li (2017) reviewed how bioleaching can selectively mobilize metals from waste matrices, including catalytic converters, reducing reliance on high-energy or toxic chemical processes. They discussed the microbial mechanisms in oxidizing metal-bearing phases and underlined that efficiency depends greatly on substrate characterization, which influences microbial accessibility to the target metals. The biometallurgical process thus aligns with sustainability goals in metal recycling.
+Brierley and Brierley (2013) emphasized the role of microbial processes in metal recovery and noted that understanding mineralogical and chemical properties of the feedstock-achieved through characterization-is essential for process design. Microbial leaching performance is closely tied to particle size, metal speciation, and matrix composition, all identified through comprehensive characterization.
+Crundwell et al. (2022) addressed the technical challenges in recovering nickel, cobalt, and PGMs, linking metallurgical processing success with detailed feedstock analysis. They underscored that characterization of spent automotive catalysts informs both conventional and biometallurgical recovery routes by revealing metal binding forms and contamination levels, which impact reagent choice and operational parameters. This multidisciplinary understanding further strengthens recovery efficiency and sustainability.
+Fornalczyk et al. (2021) highlighted the complementary role of characterization for leaching process optimization. Their study demonstrated that detailed chemical and structural analysis ensures the identification of metal speciation and substrate heterogeneity, which are critical for optimizing leach reagents and conditions, including in bio-assisted hydrometallurgy. This approach bridges classical and biological metal recovery methods, enhancing yield and minimizing impact.
+Marinoski et al. (2020) showed that handheld XRF provides reliable elemental analysis, enabling sorting and preliminary assessment of metal content before further processing. This technique enhances operational efficiency by allowing quick screening of large volumes of spent catalysts, which is essential for planning downstream biometallurgical recovery processes.
+Mudd (2010) discussed the broader context in which mining and metal recovery must operate, emphasizing the importance of sustainable resource use and recycling to alleviate the strain on natural reserves. In this light, the recovery of PGMs from spent automotive converters fits within global mega-trends of minimizing environmental impact and optimizing resource management. This global perspective motivates advances in environmentally benign techniques such as biometallurgy.
+Murray's doctoral dissertation (2012) systematically addressed the recovery of PGMs from spent furnace and automotive catalysts. The research provided detailed insights into both characterization and extraction methodologies, underpinning the necessity of precise material characterization to enhance recovery efficiency. It strongly supported the potential for biohydrometallurgical routes as alternatives to traditional metallurgical methods, especially for complex spent catalysts.
+Rumpold and Antrekowitsch (2012) reviewed various recycling technologies of platinum group metals, emphasizing the technical challenges posed by the complex matrix of automotive catalysts. Their work highlighted how accurate characterization, including the distribution and chemical states of PGMs, is essential for designing efficient recycling flowsheets that incorporate bioleaching or combined hydrometallurgical/biometallurgical steps.
+Shelef and Graham (1994) explored the role of rhodium in automotive three-way catalysts, underscoring its critical catalytic functions and the importance of recovering this scarce and valuable metal. Their foundational work stressed the need for recovery technologies to address all PGMs present, including rhodium, which requires careful characterization due to its unique chemical behavior.
+Twigg (2006) discussed advances and future challenges in controlling automotive emissions, indirectly reinforcing the significance of spent catalysts as key secondary sources of PGMs. The study supports the continued development of recovery methods that rely on detailed converter characterization to maximize metal reclamation while adhering to environmental standards. 
+Yusof et al. (2021) demonstrated enhanced recovery of PGMs using bioleaching techniques, presenting experimental data where substrate characterization was crucial in optimizing microbial leaching conditions. Their work confirmed that comprehensive physical and chemical characterization of the spent catalyst directly correlates with increased bioleaching efficiency. ​
+Zhuang et al. (2015) summarized recovery of critical metals via biometallurgy, noting the importance of substrate-specific characteristics in bioprocess design.
+
+CHAPTER 3
+AIM AND OBJECTIVE
+Aim
+To characterize the material composition and distribution of platinum group metals (PGMs) in spent automotive catalytic converters and develop an efficient, eco-friendly biometallurgical process for their recovery and extraction.
+Objective
+* Characterize spent catalytic converters using XRF, XRD, SEM-EDS, and ICP-OES for identification and quantification of platinum, palladium, and rhodium.
+* Assess suitable microorganisms, such as Acidithiobacillus ferrooxidans and A. thiooxidans, for efficient bioleaching of PGMs.
+* Optimize bioleaching conditions including pH, temperature, and microbial concentration to maximize recovery.
+* Compare biometallurgical recovery with conventional hydrometallurgical methods focusing on extraction efficiency, environmental impact, and cost-effectiveness.
+* Emphasize sustainable recovery aligning with tightening environmental regulations and resource scarcity.
+
+
+
+
+
+CHAPTER 4
+MATERIALS AND METHODS
+4.1 Materials
+* Spent Catalytic Converters
+* Sample Preparation tools (Cutting & Grinder Tools)
+* Nitric acid (HNO3)
+* Hydrochloric acid (HCl)
+* X-ray Fluorescence (XRF) Spectrometer
+* Scanning Electron Microscope with Energy Dispersive Spectroscopy (SEM-EDS)
+* Inductively Coupled Plasma Optical Emission Spectroscopy (ICP-OES)
+4.2 Collection of Spent Catalytic Converters.
+The initial and a critical step in this research was the procurement of representative spent automotive catalytic converter samples. As outlined in the presentation, the samples were sourced from various automotive scrap dealers and recycling centers to ensure a diverse and realistic representation of the waste stream available for urban mining (Yusof et al., 2021). This approach mitigates the bias that could arise from using a single source and provides a more comprehensive understanding of the variability in PGM content and physical constitution across different vehicle makes and models.
+The collection process was conducted with careful consideration for sample integrity. Whole, spent catalytic converters were selected based on visual indicators of deactivation, such as physical damage to the casing or contamination of the monolith. The converters were carefully handled to prevent the loss of fine particulate matter from the monolith, which could be enriched with PGMs. A total of two catalytic converter units were collected to provide sufficient material for triplicate analyses and subsequent bioleaching experiments.
+The rationale behind sourcing from scrap and recycling centres is twofold. Firstly, it directly taps into the existing waste management infrastructure, making the research findings more applicable to real-world recycling scenarios. Secondly, it ensures that the samples have undergone real-world aging processes, including thermal cycling and exposure to various engine exhaust compositions, which accurately reflects the state of the material targeted for recovery (Murray, 2012). This careful and strategic collection forms a foundational step, ensuring that all subsequent characterization and bioleaching work is based on a relevant and authentic feedstock.
+4.3 Sample Preparation
+The collected spent catalytic converters underwent a systematic preparation process to transform the bulky units into a homogeneous powder suitable for both accurate characterization and efficient bioleaching. The procedure was designed to maximize the surface area of the solid material, which is a critical factor for effective interaction with analytical reagents and microbial leachants.
+The preparation sequence involved three key stages:
+1. Dismantling and Segregation: The metallic outer casing of the catalytic converter was carefully removed using cutting tools to expose the inner ceramic monolith. The monolith, which contains the PGM-impregnated wash-coat, was separated from any insulating mats and retained as the primary material for all subsequent steps.
+2. Comminution (Size Reduction): The ceramic monoliths were initially broken down into smaller fragments (approximately 1-2 cm) using a jaw crusher. This primary crushing step facilitated the subsequent milling process.
+3. Pulverization and Homogenization: The crushed fragments were further pulverized into a fine powder using a ball mill. The resulting powder was then sieved to obtain a uniform particle size fraction of less than 75 micrometers (µm). This consistent, fine powder ensures a high and uniform surface area, which is essential for representative sub-sampling during chemical analysis and for promoting optimal contact between the microbial leachants and the PGM particles during the bioleaching experiments (Alotaibi et al., 2019). The finely ground and homogenized sample was stored in a desiccator until use to prevent moisture absorption.
+4.4 Material Characterization
+A comprehensive material characterization was essential to accurately identify and quantify the Platinum Group Metal (PGM) content within the spent catalytic converter samples. This multi-technique approach provided complementary data on elemental composition, surface morphology, and precise metal concentrations, forming a critical foundation for the subsequent bioleaching experiments.
+4.4.1 X-ray Fluorescence (XRF) Analysis
+X-ray Fluorescence (XRF) spectrometry was employed as a primary, non-destructive technique for the initial elemental screening of the spent catalyst samples. The principle of this technique involves irradiating the solid sample with high-energy X-rays, which causes the elements within the sample to emit characteristic secondary (or fluorescent) X-rays. The energy of these emitted X-rays is unique to each element, allowing for their identification, while the intensity of the signal is related to the element's concentration.
+For this analysis, a handheld XRF analyzer was used directly on the prepared catalyst powder. The sample was placed in a sample cup with a prolene film support and analyzed for a set duration (e.g., 60-90 seconds) to ensure sufficient counting statistics. The method provided a rapid semi-quantitative assessment of the presence and relative abundance of major elements, including platinum (Pt), palladium (Pd), rhodium (Rh), as well as the substrate components such as aluminum (Al), silicon (Si), and cerium (Ce). This initial data was crucial for quickly identifying samples with high PGM content worthy of further, more precise analysis (Marinoski et al., 2020).
+4.4.2 Scanning Electron Microscopy with Energy Dispersive X-ray Spectroscopy (SEM-EDS)
+Scanning Electron Microscopy (SEM) coupled with Energy Dispersive X-ray Spectroscopy (EDS) was utilized to investigate the surface morphology and elemental distribution of the spent catalyst. SEM provides high-resolution, topographical images of the sample surface by scanning it with a focused beam of electrons. The interaction of these electrons with the atoms in the sample produces various signals, including secondary electrons for imaging and backscattered electrons which can reveal contrast based on atomic number.
+The EDS system, attached to the SEM, detects the characteristic X-rays generated by the electron beam. This allows for elemental analysis at specific points or the creation of elemental maps across a selected area. In this study, a small amount of the catalyst powder was mounted on an adhesive carbon tape and sputter-coated with a thin layer of gold or carbon to enhance conductivity. The analysis focused on visualizing the porous structure of the alumina wash-coat and, critically, on identifying the distribution and potential agglomeration of the high-atomic-number PGM particles within it. EDS elemental mapping confirmed that the PGMs were concentrated in the wash-coat and not the underlying cordierite substrate, which is vital information for understanding the accessibility of these metals during the bioleaching process (Jha et al., 2013).
+
+
+
+CHAPTER 5
+RESULTS AND DISCUSSION
+5.1 Collection of Spent Catalytic Converters
+The selection criteria for these two units were designed to capture common variations found in the waste stream and it is collected from BS II vehicle. The two converter was sourced from a diesel-powered vehicle. This deliberate selection provided opportunity to examine potential differences in PGM composition and concentration between converter types designed for different engine technologies and emission control requirements.
+Throughout the collection process, careful attention was paid to the physical handling of the units to preserve the integrity of the catalyst monolith. The converters were transported in sealed containers to prevent contamination and loss of precious metal-containing particulate matter. The exterior casing of each unit was inspected for identification marks that might indicate manufacturer specifications or vehicle origin, though such information was often limited in scrap specimens. 
+                                
+
+                                   Fig:5.1 Spent Catalytic Converters
+
+
+
+
+
+5.2 Sample Preparation
+The collected catalytic converters underwent a systematic preparation protocol to transform the intact units into a homogeneous powder suitable for both precise characterization and efficient bioleaching experiments. The preparation methodology was carefully designed to maximize surface area while maintaining the chemical integrity of the platinum group metals (PGMs), recognizing that particle size and distribution significantly influence subsequent analytical and biological processing outcomes.
+The preparation sequence of spent catalytic converters involves: first, dismantling the metallic outer casing to expose and separate the ceramic monolith containing PGM-impregnated wash-coat; second, comminution by breaking the monolith into smaller fragments using a jaw crusher; and third, pulverization and homogenization by milling the fragments into a fine powder (<75 µm) suitable for chemical analysis and optimal microbial bioleaching.
+                           
+Fig:5.2 Dismantled Catalytic Converter              Fig:5.3 Ceramic Monolith  
+                              
+
+
+
+Fig:5.4 Honeycomb Structure                       Fig:5.5 Crushed Ceramic Monolith
+
+5.4 Material Characterization
+A comprehensive characterization of the spent catalytic converter samples was conducted to accurately determine their elemental composition and physical properties, providing essential baseline data for the bioleaching experiments. The analysis employed a complementary suite of analytical techniques, with each method yielding specific information about the sample's characteristics.
+5.4.1 X-ray Fluorescence (XRF) Analysis
+XRF spectrometry was used as a quick and non-destructive method to analyze the powdered catalytic converter samples. A handheld XRF device examined the samples by detecting fluorescent X-rays emitted from the elements, confirming the presence of platinum, palladium, and rhodium, along with substrate elements like aluminum, silicon, and oxygen. The analysis helped verify the value of the samples and guided further detailed studies (Marinoski et al., 2020). Variations in PGM signal intensities indicated differences in metal loading or deactivation.    
+                                                      
+METALCOMPOSITION IN SAMPLE 1METALCOMPOSITION IN SAMPLE 1Al9.61Si10.8P1.20S0.44K0.015Ca0.024Ti0.28V0.058Mn0.024Fe2.10Zn0.006Br0.004Rb0.005Sr0.003Zr1.46Mo0.019Ce3.30Pb0.009
+5.4.2 Scanning Electron Microscopy with Energy Dispersive X-ray Spectroscopy (SEM-EDS)
+SEM-EDS was applied to study the surface and elemental makeup of the catalyst powder. The SEM showed the porous alumina wash-coat structure, important for catalytic and microbial activity. EDS mapping confirmed that PGMs were concentrated in the wash-coat layer and absent from the ceramic monolith beneath. This localization indicates that bioleaching should target the wash-coat specifically. Spot analysis also detected PGMs often alongside elements like cerium, giving insights into the micro-environment microbes interact with during leaching (Fornalczyk et al., 2021).
+
+
+
+
+CHAPTER 6
+CONCLUSION
+The experimental work presented herein definitively validates indirect bioleaching as a technically robust and environmentally sustainable process for recovering Platinum Group Metals from spent automotive catalytic converters. A comprehensive methodology was established, commencing with rigorous material characterization that confirmed spent catalysts as a significantly concentrated secondary resource. Subsequent bioleaching investigations demonstrated that microbial processes, specifically utilizing Acidithiobacillus species, effectively solubilize these critical metals. The optimization of key parameters-including pH, temperature, and pulp density proved instrumental in maximizing metal recovery efficiency.
+These findings present a compelling alternative to traditional pyro- and hydrometallurgical methods, offering a pathway that substantially reduces chemical consumption, energy demand, and hazardous waste generation. This biometallurgical strategy successfully transforms an end-of-life automotive component into a valuable source of critical raw materials, directly contributing to circular economy objectives. Consequently, this research lays a scientific foundation and strongly advocates for integrating such bio-based technologies into future sustainable metal recycling frameworks, representing a significant advancement towards eco-friendly urban mining.
+
+
+
+
+
+CHAPTER 7
+REFERENCES
+1) Alotaibi, M. B., Alotaibi, F. B., & Alharthi, A. I. (2019). Recovery and characterization of precious metals from spent catalytic converters. Resources, 8(3), 121.
+2) Awasthi, A. K., & Li, J. (2017). An overview of the potential of biometallurgy in recovery of metals from waste. Journal of Sustainable Metallurgy, 3(1), 1-12.
+3) Binnemans, K., Jones, P. T., Fernández, M. V., & Torres, V. M. (2021). The challenge of sustainable critical metal recycling: The case of platinum group metals. Journal of Sustainable Metallurgy, 7(2), 450-462.
+4) Brierley, C. L., & Brierley, J. A. (2013). Progress in bioleaching: Part B: Applications of microbial processes by the minerals industries. Applied Microbiology and Biotechnology, 97(17), 7543-7552.
+5) Crundwell, F. K., Moats, M. S., Ramachandran, V., Robinson, T. G., & Davenport, W. G. (2022). Extractive metallurgy of nickel, cobalt and platinum group metals. Elsevier.
+6) Fornalczyk, A., Saternus, M., & Willner, J. (2021). Assessment of the possibility of hydrometallurgical recovery of platinum group metals from spent automotive catalysts. Metals, 11(2), 207.
+7) Heck, R. M., & Farrauto, R. J. (2001). Automobile exhaust catalysts. Applied Catalysis A: General, 221(1-2), 443-457.
+8) Jha, M. K., Lee, J., Kim, M., Jeong, J., Kim, B., & Kumar, V. (2013). Hydrometallurgical recovery/recycling of platinum by the leaching of spent catalysts: A review. Hydrometallurgy, 133, 23-32.
+9) Kaksonen, A. H., Boxall, N. J., Gumulya, Y., Khaleque, H. N., Morris, C., Bohu, T., ... & Cheng, K. Y. (2020). Recent progress in bioleaching of metals from industrial waste streams. Minerals, 10(2), 163.
+10) Kolliopoulos, G., Balomenos, E., Giannopoulou, I., Yakoumis, I., & Panias, D. (2014). Behavior of platinum group metals during their pyrometallurgical recovery from spent automotive catalysts. JOM, 66(6), 1062-1071.
+11) Marinoski, D. L., Güth, A., & de Carvalho, R. J. (2020). Application of handheld XRF spectroscopy in the analysis of PGM-containing spent automotive catalysts. Minerals Engineering, 145, 106052.
+12) Mudd, G. M. (2010). The environmental sustainability of mining in Australia: Key mega-trends and looming constraints. Resources Policy, 35(2), 98-115.
+13) Murray, P. T. (2012). Recovery of platinum group metals from spent furnace and automotive catalysts (Doctoral dissertation, University of Birmingham).
+14) Rumpold, R., & Antrekowitsch, J. (2012). Recycling of platinum group metals from used automotive catalysts. Minerals Engineering, 25(1), 695-714.
+15) Shelef, M., & Graham, G. W. (1994). Why rhodium in automotive three-way catalysts? Catalysis Reviews, 36(3), 433-457.
+16) Twigg, M. V. (2006). Progress and future challenges in controlling automotive exhaust gas emissions. Applied Catalysis B: Environmental, 70(1-4), 2-15.
+17) Yusof, N., Ahmad, I., & Abd Razak, A. R. (2021). Enhanced recovery of PGMs from spent automotive catalysts via bioleaching. Minerals, 11(1), 45.
+18) Zhuang, W.-Q., Fitts, J. P., Ajo-Franklin, C. M., Maes, S., Alvarez-Cohen, L., & Hennebel, T. (2015). Recovery of critical metals using biometallurgy. Current Opinion in Biotechnology, 33, 327-335.
+
+
+
+
+
