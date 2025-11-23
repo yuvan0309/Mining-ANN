@@ -14,7 +14,7 @@ def create_architecture_diagram():
     ax.set_xlim(0, 16)
     ax.set_ylim(0, 12)
     ax.axis('off')
-    
+    # sample
     # Title
     ax.text(8, 11.5, 'FACTOR OF SAFETY (FoS) PREDICTION SYSTEM', 
             ha='center', fontsize=18, fontweight='bold', color='#2c3e50')

@@ -98,6 +98,7 @@ Expected output:
    - POST /predict   : FoS prediction
 ```
 
+
 ### Terminal 2: Start Frontend Server
 
 ```bash
